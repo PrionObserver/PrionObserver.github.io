@@ -3,134 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name - Portfolio</title>
+    <title>Quinn Kinata - Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* Deep Navy background */
+            background-color: #1a2634;
+            color: #e0e6ed; /* Off-White/Light Gray default text */
+            line-height: 1.6; /* Improved readability */
         }
-        /* Optional: Add some custom styles here if needed */
+
         /* Ensure iframes have a background if their content doesn't */
         iframe {
             background-color: #000; /* Fallback for video embeds */
         }
+
+        /* Style for images - ensures they don't overflow and are clickable */
+        .photo-container img {
+            max-width: 100%; /* Images will scale down to fit container */
+            height: auto; /* Maintain aspect ratio */
+            cursor: pointer; /* Indicate that the image is clickable */
+            transition: transform 0.3s ease; /* Smooth transition for potential future effects */
+        }
+
+        /* Styles for the enlarged image overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Dark semi-transparent background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of other content */
+            cursor: pointer; /* Indicate that clicking closes the overlay */
+        }
+
+        .overlay img {
+            max-width: 90%; /* Limit the maximum size in the overlay */
+            max-height: 90%; /* Limit the maximum size in the overlay */
+            object-fit: contain; /* Ensure the whole image is visible */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.7); /* Add a more prominent shadow */
+        }
+
+        /* Hide the overlay by default */
+        .overlay.hidden {
+            display: none;
+        }
+
+        /* Style for the clickable project image */
+        .project-link-image {
+            cursor: pointer; /* Indicate that the image is clickable */
+            transition: opacity 0.3s ease; /* Optional: Add a hover effect */
+        }
+        .project-link-image:hover {
+            opacity: 0.9; /* Slightly dim on hover */
+        }
+
+        /* Custom style to make the links list horizontal */
+        .header-links li {
+            display: inline-block;
+            margin-left: 1.5rem; /* Spacing between links */
+        }
+
+
+        /* Adjust text color for specific elements */
+        h1, h2 {
+            color: #ffffff; /* White color for headings */
+            font-weight: 700; /* Ensure headings are bold */
+        }
+
+        /* Link colors */
+        a {
+            color: #5ac8fa; /* Bright Sky Blue */
+            text-decoration: none; /* Remove default underline */
+            transition: color 0.3s ease; /* Smooth color transition */
+        }
+        a:hover {
+            color: #89d0f8; /* Lighter blue on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+        /* Specific link colors in header */
+        .header-links a {
+             color: #9ba3af; /* Medium Gray for header links */
+        }
+         .header-links a:hover {
+            color: #e0e6ed; /* Lighter on hover */
+         }
+
+         /* Footer text color */
+         footer p {
+            color: #9ba3af; /* Medium Gray for footer text */
+         }
+
+         /* Section background colors */
+         .section-bg-dark {
+             background-color: #253342; /* Charcoal Blue */
+         }
+         /* No specific medium background, using body background for alternating sections */
+
+        /* --- Styles for Image Overlays on Headers --- */
+        .header-with-image {
+            position: relative; /* Needed for absolute positioning of text */
+            background-size: cover; /* Cover the container */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            /* Fallback background color if image is not loaded */
+            background-color: #253342; /* Use the dark section background as fallback */
+            /* Increased minimum height for header areas */
+            min-height: 300px; /* Increased from 120px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden; /* Hide parts of the image that overflow */
+        }
+
+         .header-with-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* Subtle dark overlay for text readability */
+            z-index: 1; /* Place overlay above background image but below text */
+        }
+
+        /* Adjusted padding for header content */
+        .header-content {
+            position: relative;
+            z-index: 2; /* Ensure text is above the overlay */
+            padding: 20px; /* Add some padding around the text */
+        }
+
+        /* Adjust header container for flex column layout and top alignment */
+        header .container {
+             padding-top: 0;
+             padding-bottom: 0;
+             min-height: 300px;
+             display: flex;
+             flex-direction: column;
+             align-items: center; /* Center content horizontally */
+             justify-content: flex-start; /* Align content to the top */
+             /* Adjusted padding-top to move the block higher */
+             padding-top: 40px; /* Adjusted value to move content higher */
+        }
+
+        /* Add margin-bottom to the h1 in the header for space below it */
+        header .container h1 {
+            margin-bottom: 15px; /* Increased spacing below title */
+        }
+
+        /* Style for the container holding nav and external links */
+        .nav-links-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center nav and external links horizontally */
+        }
+
+        /* Add margin-top to the external links container for space below nav */
+        .external-links-container {
+            margin-top: 15px; /* Increased spacing below navigation */
+        }
+
+        /* Ensure header text is vertically centered (keeping original rule but adjusted container handles alignment) */
+        header .container .flex.items-center {
+             align-items: center;
+             height: auto; /* Let content determine height */
+        }
+
+
+        /* --- Slideshow Styles --- */
+        .slideshow-container {
+            position: relative;
+            /* Increased max width of the slideshow */
+            max-width: 960px; /* Increased from 800px */
+            margin: auto; /* Center the slideshow */
+            overflow: hidden; /* Hide images outside the view */
+            border-radius: 8px; /* Match card rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        .mySlides {
+            display: none; /* Hide slides by default */
+            width: 100%;
+            height: auto;
+        }
+
+        /* Next & previous buttons */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+            z-index: 10; /* Ensure buttons are above images */
+        }
+
+        /* Position the "next button" to the right */
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        /* On hover, add a black background color with a little more opacity */
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        /* Caption text - Removed */
+        /*
+        .text {
+            color: #f2f2f2;
+            font-size: 15px;
+            padding: 8px 12px;
+            position: absolute;
+            bottom: 8px;
+            width: 100%;
+            text-align: center;
+            background-color: rgba(0,0,0,0.5);
+        }
+        */
+
+        /* Number text (1/3 etc) */
+        .numbertext {
+            color: #f2f2f2;
+            font-size: 12px;
+            padding: 8px 12px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+        }
+
+        /* The dots/bullets/indicators */
+        .dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.6s ease;
+        }
+
+        .active, .dot:hover {
+            background-color: #717171;
+        }
+
+        /* Fading animation */
+        .fade {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @keyframes fade {
+            from {opacity: .4}
+            to {opacity: 1}
+        }
+
+        /* Styling for footer links */
+        footer a {
+            color: #9ba3af; /* Match footer text color */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #e0e6ed; /* Lighter on hover */
+            text-decoration: underline;
+        }
+
+
     </style>
 </head>
-<body class="bg-gray-900 text-gray-300">
+<body>
 
-    <header class="bg-gray-800 shadow-lg py-4">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-white">Your Name</h1>
-            <nav>
-                <ul class="flex space-x-4">
-                    <li><a href="#projects" class="text-gray-400 hover:text-blue-400 transition duration-300">Projects</a></li>
-                    <li><a href="#photos" class="text-gray-400 hover:text-blue-400 transition duration-300">Photos</a></li>
-                    <li><a href="#videos" class="text-gray-400 hover:text-blue-400 transition duration-300">Videos</a></li>
-                    <li><a href="#contact" class="text-gray-400 hover:text-blue-400 transition duration-300">Contact</a></li>
-                </ul>
-            </nav>
+    <header class="section-bg-dark shadow-xl py-6 header-with-image" style="background-image: url('https://i.imgur.com/IX22boV.png'); min-height: 300px;">
+        <div class="container mx-auto px-4 header-content" style="min-height: 300px;">
+            <h1 class="text-2xl font-bold">Quinn's Portfolio</h1>
+
+            <div class="nav-links-container">
+                <nav>
+                    <ul class="flex space-x-8">
+                        <li><a href="#photos" class="transition duration-300">Photos</a></li>
+                        <li><a href="#videos" class="transition duration-300">Videos</a></li>
+                         <li><a href="#projects" class="transition duration-300">Projects</a></li>
+                    </ul>
+                </nav>
+
+                 <div class="external-links-container">
+                     <ul class="header-links">
+                        <li><a href="https://www.instagram.com/quinn.kinata/" target="_blank">Instagram</a></li>
+                         <li><a href="https://www.youtube.com/@QuinnKinata" target="_blank">YouTube</a></li>
+                        <li><a href="https://www.linkedin.com/in/qkinata/" target="_blank">LinkedIn</a></li>
+                         <li><a href="https://github.com/PrionObserver" target="_blank">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="bg-blue-800 text-white py-16 text-center">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold mb-4">Welcome to My Portfolio</h2>
-            <p class="text-xl">Showcasing my work and passion for [Your Field/Interests].</p>
-        }
-    </section>
-
-    <section id="projects" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/600x400/374151/D1D5DB?text=Project+Image+1" alt="Project 1" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-white">Project Title 1</h3>
-                        <p class="text-gray-400 mb-4">Brief description of Project 1. Mention technologies used, your role, and key outcomes.</p>
-                        <a href="#" class="text-blue-400 hover:underline">Learn More</a>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/600x400/4B5563/D1D5DB?text=Project+Image+2" alt="Project 2" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-white">Project Title 2</h3>
-                        <p class="text-gray-400 mb-4">Brief description of Project 2. Mention technologies used, your role, and key outcomes.</p>
-                        <a href="#" class="text-blue-400 hover:underline">Learn More</a>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/600x400/6B7280/D1D5DB?text=Project+Image+3" alt="Project 3" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-white">Project Title 3</h3>
-                        <p class="text-gray-400 mb-4">Brief description of Project 3. Mention technologies used, your role, and key outcomes.</p>
-                        <a href="#" class="text-blue-400 hover:underline">Learn More</a>
-                    </div>
-                </div>
-                </div>
+    <section id="photos" class="py-20">
+         <div class="header-with-image mb-16" style="background-image: url('[Your Photos Background Image URL]'); min-height: 150px;"> <div class="header-content">
+                 <h2 class="text-3xl text-center">Photos</h2>
+            </div>
         </div>
-    </section>
-
-    <section id="photos" class="bg-gray-800 py-16">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">Photos</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/400x300/374151/D1D5DB?text=Photo+1" alt="Photo 1" class="w-full h-auto object-cover">
-                </div>
-                <div class="rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/400x300/4B5563/D1D5DB?text=Photo+2" alt="Photo 2" class="w-full h-auto object-cover">
-                </div>
-                <div class="rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/400x300/6B7280/D1D5DB?text=Photo+3" alt="Photo 3" class="w-full h-auto object-cover">
-                </div>
-                 <div class="rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://placehold.co/400x300/374151/D1D5DB?text=Photo+4" alt="Photo 4" class="w-full h-auto object-cover">
-                </div>
-                </div>
-        </div>
-    </section>
+            <p class="text-center text-gray-400 mb-16">A selection of my projects and photography. (Manually updated)</p>
 
-    <section id="videos" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">Videos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="rounded-lg shadow-lg overflow-hidden">
-                    <div class="relative" style="padding-top: 56.25%;">
-                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4 bg-gray-800 text-white">
-                        <h3 class="text-xl font-semibold">Video Title 1</h3>
-                    </div>
-                </div>
-                 <div class="rounded-lg shadow-lg overflow-hidden">
-                    <div class="relative" style="padding-top: 56.25%;">
-                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/ANOTHER_VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4 bg-gray-800 text-white">
-                        <h3 class="text-xl font-semibold">Video Title 2</h3>
-                    </div>
-                </div>
-                </div>
-        </div>
-    </section>
+            <div class="slideshow-container" style="max-width: 960px;">
 
-    <section id="contact" class="bg-gray-800 py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-8 text-white">Get in Touch</h2>
-            <p class="text-lg mb-8 text-gray-400">Feel free to reach out to me!</p>
-            <p class="text-lg text-gray-400">Instagram: <a href="[https://www.instagram.com/quinn.kinata/]" class="text-blue-400 hover:underline" target="_blank">Instagram</a></p>
-            <p class="text-lg text-gray-400">YouTube: <a href="[https://www.youtube.com/@QuinnKinata]" class="text-blue-400 hover:underline" target="_blank">YouTube</a></p>
-            <p class="text-lg text-gray-400">LinkedIn: <a href="[https://www.linkedin.com/in/qkinata/]" class="text-blue-400 hover:underline" target="_blank">LinkedIn</a></p>
+                <div class="mySlides fade">
+                    <div class="numbertext">1 / 18</div>
+                    <img src="https://i.imgur.com/vmRKx77.png" style="width:100%" alt="Slideshow Image 1">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">2 / 18</div>
+                    <img src="https://i.imgur.com/tpkmzqE.png" style="width:100%" alt="Slideshow Image 2">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">3 / 18</div>
+                    <img src="https://i.imgur.com/rLiZBzd.png" style="width:100%" alt="Slideshow Image 3">
+                    </div>
+
+                 <div class="mySlides fade">
+                    <div class="numbertext">4 / 18</div>
+                    <img src="https://i.imgur.com/OEfjNJj.png" style="width:100%" alt="Slideshow Image 4">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">5 / 18</div>
+                    <img src="https://i.imgur.com/DHSEtY2.png" style="width:100%" alt="Slideshow Image 5">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">6 / 18</div>
+                    <img src="https://i.imgur.com/h2NwKL5.png" style="width:100%" alt="Slideshow Image 6">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">7 / 18</div>
+                    <img src="https://i.imgur.com/RF2ST8q.png" style="width:100%" alt="Slideshow Image 7">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">8 / 18</div>
+                    <img src="https://i.imgur.com/L2xKwk7.png" style="width:100%" alt="Slideshow Image 8">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">9 / 18</div>
+                    <img src="https://i.imgur.com/7FKksjN.png" style="width:100%" alt="Slideshow Image 9">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">10 / 18</div>
+                    <img src="https://i.imgur.com/J6pvi0s.png" style="width:100%" alt="Slideshow Image 10">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">11 / 18</div>
+                    <img src="https://i.imgur.com/lge9pDg.png" style="width:100%" alt="Slideshow Image 11">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">12 / 18</div>
+                    <img src="https://i.imgur.com/37p1ZUR.png" style="width:100%" alt="Slideshow Image 12">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">13 / 18</div>
+                    <img src="https://i.imgur.com/92y8IJK.png" style="width:100%" alt="Slideshow Image 13">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">14 / 18</div>
+                    <img src="https://i.imgur.com/oqlDoZL.png" style="width:100%" alt="Slideshow Image 14">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">15 / 18</div>
+                    <img src="https://i.imgur.com/Ndd1sZm.png" style="width:100%" alt="Slideshow Image 15">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">16 / 18</div>
+                    <img src="https://i.imgur.com/JqO1p72.png" style="width:100%" alt="Slideshow Image 16">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">17 / 18</div>
+                    <img src="https://i.imgur.com/i9wJvz2.png" style="width:100%" alt="Slideshow Image 17">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">18 / 18</div>
+                    <img src="https://i.imgur.com/pzTXFOz.jpeg" style="width:100%" alt="Slideshow Image 18">
+                    </div>
+
+
+                <a class="prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next" onclick="plusSlides(1)">❯</a>
+
+            </div>
+            <br>
+
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+                <span class="dot" onclick="currentSlide(6)"></span>
+                <span class="dot" onclick="currentSlide(7)"></span>
+                <span class="dot" onclick="currentSlide(8)"></span>
+                <span class="dot" onclick="currentSlide(9)"></span>
+                <span class="dot" onclick="currentSlide(10)"></span>
+                <span class="dot" onclick="currentSlide(11)"></span>
+                <span class="dot" onclick="currentSlide(12)"></span>
+                <span class="dot" onclick="currentSlide(13)"></span>
+                <span class="dot" onclick="currentSlide(14)"></span>
+                <span class="dot" onclick="currentSlide(15)"></span>
+                <span class="dot" onclick="currentSlide(16)"></span>
+                <span class="dot" onclick="currentSlide(17)"></span>
+                <span class="dot" onclick="currentSlide(18)"></span>
+            </div>
+
             </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-500 py-8 text-center">
+    <section id="videos" class="section-bg-dark py-20"> <div class="container mx-auto px-4">
+            <h2 class="text-3xl text-center mb-16">Hyperstereo Timelapse Videos</h2>
+             <p class="text-center text-gray-400 mb-12">Check out my latest videos. (Manually updated)</p> <div class="grid grid-cols-1 gap-8">
+                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800"> <div class="relative" style="padding-top: 56.25%;">
+                        <iframe width="1920" height="1080" src="https://www.youtube.com/embed/1JbvGFYwPvQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6 bg-gray-900"> <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - C/2023 A3 (Tsuchinshan–ATLAS)</h3> </div>
+                </div>
+                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800"> <div class="relative" style="padding-top: 56.25%;">
+                         <iframe width="1920" height="1080" src="https://www.youtube.com/embed/u4RX4SyIzj8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6 bg-gray-900"> <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - Glorious Aurora - PNW 2024.10.10</h3> </div>
+                </div>
+                </div>
+        </div>
+    </section>
+
+     <section id="projects" class="py-20"> <div class="container mx-auto px-4">
+            <h2 class="text-3xl text-center mb-16">Projects (Work in Progress)</h2> <p class="text-center text-gray-400 mb-16">While this section is under development, you can explore this related project by Jerry Biehler:</p> <div class="flex justify-center mb-12"> <a href="https://hackaday.io/project/3281-hitachi-s-450-scanning-electron-microscope" target="_blank" class="block rounded-lg shadow-xl overflow-hidden max-w-lg bg-gray-800"> <img src="https://cdn.hackaday.io/images/6833051414698947663.jpg" alt="Hitachi S-450 Scanning Electron Microscope Project on Hackaday.io" class="w-full h-auto object-cover project-link-image">
+                     <div class="p-6 text-center text-gray-300"> <p>Hitachi S-450 Scanning Electron Microscope Project</p>
+                     </div>
+                </a>
+            </div>
+            </div>
+    </section>
+
+    <footer class="section-bg-dark text-gray-500 py-8 text-center">
         <div class="container mx-auto px-4">
-            <p>© 2023 Your Name. All rights reserved.</p>
+            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a></p>
         </div>
     </footer>
+
+    <script>
+        // --- Image Overlay (Click to Enlarge) Script ---
+        // Get all images with the class "clickable-photo"
+        const clickablePhotos = document.querySelectorAll('.clickable-photo');
+
+        // Create the overlay element
+        const overlay = document.createElement('div');
+        overlay.classList.add('overlay', 'hidden'); // Add 'overlay' and 'hidden' classes
+        document.body.appendChild(overlay); // Add overlay to the body
+
+        // Create the image element inside the overlay
+        const overlayImage = document.createElement('img');
+        overlay.appendChild(overlayImage);
+
+        // Add click event listener to each clickable photo
+        clickablePhotos.forEach(photo => {
+            photo.addEventListener('click', () => {
+                // Set the source of the overlay image to the clicked photo's source
+                overlayImage.src = photo.src;
+                // Show the overlay
+                overlay.classList.remove('hidden');
+            });
+        });
+
+        // Add click event listener to the overlay to close it
+        overlay.addEventListener('click', () => {
+            // Hide the overlay
+            overlay.classList.add('hidden');
+            // Clear the image source to free up memory
+            overlayImage.src = '';
+        });
+
+        // Optional: Close the overlay with the Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !overlay.classList.contains('hidden')) {
+                overlay.click(); // Simulate a click on the overlay
+            }
+        });
+
+        // Note: Implementing this for videos is more complex as it involves
+        // dynamically creating/managing iframe embeds within the overlay.
+        // The current implementation is for images only.
+
+        // --- Slideshow Script ---
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Next/previous controls
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+          let i;
+          let slides = document.getElementsByClassName("mySlides");
+          let dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+        }
+
+        // Optional: Auto-advance the slideshow (uncomment the function and the interval call)
+        /*
+        function autoShowSlides() {
+          let i;
+          let slides = document.getElementsByClassName("mySlides");
+          let dots = document.getElementsByClassName("dot");
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+          }
+          slideIndex++;
+          if (slideIndex > slides.length) {slideIndex = 1}
+          for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+          setTimeout(autoShowSlides, 5000); // Change image every 5 seconds
+        }
+        // Call autoShowSlides() to start the automatic slideshow
+        // autoShowSlides();
+        */
+
+        // Add keyboard navigation for slideshow
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                plusSlides(-1); // Go to previous slide
+            } else if (event.key === 'ArrowRight') {
+                plusSlides(1); // Go to next slide
+            }
+        });
+
+    </script>
 
 </body>
 </html>
