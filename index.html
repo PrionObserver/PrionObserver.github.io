@@ -116,7 +116,7 @@
             /* Fallback background color if image is not loaded */
             background-color: #253342; /* Use the dark section background as fallback */
             /* Increased minimum height for header areas */
-            min-height: 300px; /* Increased from 120px */
+            min-height: 500px; /* Increased height for the header image */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -146,7 +146,7 @@
         header .container {
              padding-top: 0;
              padding-bottom: 0;
-             min-height: 300px;
+             min-height: 500px; /* Match the increased header height */
              display: flex;
              flex-direction: column;
              align-items: center; /* Center content horizontally */
@@ -176,6 +176,29 @@
         header .container .flex.items-center {
              align-items: center;
              height: auto; /* Let content determine height */
+        }
+
+        /* CSS to make iframes fill their parent container for responsiveness and fullscreen */
+        .relative iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Style for the floating profile image - Adjusted position and size */
+        .profile-image {
+            position: fixed; /* Make it float */
+            bottom: 20px; /* Distance from the bottom */
+            left: 20px; /* Distance from the left */
+            width: 98px; /* Increased size by ~30% */
+            height: 98px; /* Increased size by ~30% */
+            border-radius: 50%; /* Make it round */
+            object-fit: cover; /* Ensure the image covers the area without distortion */
+            z-index: 100; /* Ensure it's above most content */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+            background-color: transparent; /* Transparent background if image fails */
         }
 
 
@@ -294,8 +317,13 @@
 </head>
 <body>
 
-    <header class="section-bg-dark shadow-xl py-6 header-with-image" style="background-image: url('https://i.imgur.com/IX22boV.png'); min-height: 300px;">
-        <div class="container mx-auto px-4 header-content" style="min-height: 300px;">
+    <a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank">
+        <img src="https://media.licdn.com/dms/image/v2/D5603AQHFNc6k5lKT1g/profile-displayphoto-shrink_800_800/B56ZZ.hKEIHsAg-/0/1745879343811?e=1751500800&v=beta&t=KaMDMSdgvxNmJDgBvzTUxqk5RSzGPp7qzPlNpwVC12I" alt="Quinn Kinata Profile Picture" class="profile-image" onerror="this.style.display='none'">
+    </a>
+
+
+    <header class="section-bg-dark shadow-xl py-6 header-with-image" style="background-image: url('https://i.imgur.com/IX22boV.png'); min-height: 500px;">
+        <div class="container mx-auto px-4 header-content" style="min-height: 500px;">
             <h1 class="text-2xl font-bold">Quinn's Portfolio</h1>
 
             <div class="nav-links-container">
@@ -330,94 +358,99 @@
             <div class="slideshow-container" style="max-width: 960px;">
 
                 <div class="mySlides fade">
-                    <div class="numbertext">1 / 18</div>
+                    <div class="numbertext">1 / 19</div>
                     <img src="https://i.imgur.com/vmRKx77.png" style="width:100%" alt="Slideshow Image 1">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">2 / 18</div>
+                    <div class="numbertext">2 / 19</div>
                     <img src="https://i.imgur.com/tpkmzqE.png" style="width:100%" alt="Slideshow Image 2">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">3 / 18</div>
+                    <div class="numbertext">3 / 19</div>
                     <img src="https://i.imgur.com/rLiZBzd.png" style="width:100%" alt="Slideshow Image 3">
                     </div>
 
                  <div class="mySlides fade">
-                    <div class="numbertext">4 / 18</div>
+                    <div class="numbertext">4 / 19</div>
                     <img src="https://i.imgur.com/OEfjNJj.png" style="width:100%" alt="Slideshow Image 4">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">5 / 18</div>
+                    <div class="numbertext">5 / 19</div>
                     <img src="https://i.imgur.com/DHSEtY2.png" style="width:100%" alt="Slideshow Image 5">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">6 / 18</div>
+                    <div class="numbertext">6 / 19</div>
                     <img src="https://i.imgur.com/h2NwKL5.png" style="width:100%" alt="Slideshow Image 6">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">7 / 18</div>
+                    <div class="numbertext">7 / 19</div>
                     <img src="https://i.imgur.com/RF2ST8q.png" style="width:100%" alt="Slideshow Image 7">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">8 / 18</div>
+                    <div class="numbertext">8 / 19</div>
                     <img src="https://i.imgur.com/L2xKwk7.png" style="width:100%" alt="Slideshow Image 8">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">9 / 18</div>
+                    <div class="numbertext">9 / 19</div>
                     <img src="https://i.imgur.com/7FKksjN.png" style="width:100%" alt="Slideshow Image 9">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">10 / 18</div>
+                    <div class="numbertext">10 / 19</div>
                     <img src="https://i.imgur.com/J6pvi0s.png" style="width:100%" alt="Slideshow Image 10">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">11 / 18</div>
+                    <div class="numbertext">11 / 19</div>
                     <img src="https://i.imgur.com/lge9pDg.png" style="width:100%" alt="Slideshow Image 11">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">12 / 18</div>
+                    <div class="numbertext">12 / 19</div>
                     <img src="https://i.imgur.com/37p1ZUR.png" style="width:100%" alt="Slideshow Image 12">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">13 / 18</div>
+                    <div class="numbertext">13 / 19</div>
                     <img src="https://i.imgur.com/92y8IJK.png" style="width:100%" alt="Slideshow Image 13">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">14 / 18</div>
+                    <div class="numbertext">14 / 19</div>
                     <img src="https://i.imgur.com/oqlDoZL.png" style="width:100%" alt="Slideshow Image 14">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">15 / 18</div>
+                    <div class="numbertext">15 / 19</div>
                     <img src="https://i.imgur.com/Ndd1sZm.png" style="width:100%" alt="Slideshow Image 15">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">16 / 18</div>
+                    <div class="numbertext">16 / 19</div>
                     <img src="https://i.imgur.com/JqO1p72.png" style="width:100%" alt="Slideshow Image 16">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">17 / 18</div>
+                    <div class="numbertext">17 / 19</div>
                     <img src="https://i.imgur.com/i9wJvz2.png" style="width:100%" alt="Slideshow Image 17">
                     </div>
 
                 <div class="mySlides fade">
-                    <div class="numbertext">18 / 18</div>
+                    <div class="numbertext">18 / 19</div>
                     <img src="https://i.imgur.com/pzTXFOz.jpeg" style="width:100%" alt="Slideshow Image 18">
                     </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">19 / 19</div>
+                    <img src="https://i.imgur.com/fFNy7oL.png" style="width:100%" alt="Slideshow Image 19">
+                </div>
 
 
                 <a class="prev" onclick="plusSlides(-1)">❮</a>
@@ -445,25 +478,34 @@
                 <span class="dot" onclick="currentSlide(16)"></span>
                 <span class="dot" onclick="currentSlide(17)"></span>
                 <span class="dot" onclick="currentSlide(18)"></span>
+                <span class="dot" onclick="currentSlide(19)"></span>
             </div>
 
             </div>
     </section>
 
-    <section id="videos" class="section-bg-dark py-20"> <div class="container mx-auto px-4">
+    <section id="videos" class="section-bg-dark py-20">
+        <div class="container mx-auto px-4">
             <h2 class="text-3xl text-center mb-16">Hyperstereo Timelapse Videos</h2>
-             <p class="text-center text-gray-400 mb-12">Check out my latest videos. (Manually updated)</p> <div class="grid grid-cols-1 gap-8">
-                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800"> <div class="relative" style="padding-top: 56.25%;">
-                        <iframe width="1920" height="1080" src="https://www.youtube.com/embed/1JbvGFYwPvQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <p class="text-center text-gray-400 mb-12">Check out my latest videos. (Manually updated)</p>
+            <div class="grid grid-cols-1 gap-8">
+                <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800">
+                    <div class="relative" style="padding-top: 56.25%;">
+                        <iframe src="https://www.youtube.com/embed/1JbvGFYwPvQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
-                    <div class="p-6 bg-gray-900"> <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - C/2023 A3 (Tsuchinshan–ATLAS)</h3> </div>
-                </div>
-                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800"> <div class="relative" style="padding-top: 56.25%;">
-                         <iframe width="1920" height="1080" src="https://www.youtube.com/embed/u4RX4SyIzj8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="p-6 bg-gray-900">
+                        <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - C/2023 A3 (Tsuchinshan–ATLAS)</h3>
                     </div>
-                    <div class="p-6 bg-gray-900"> <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - Glorious Aurora - PNW 2024.10.10</h3> </div>
                 </div>
+                <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800">
+                    <div class="relative" style="padding-top: 56.25%;">
+                         <iframe src="https://www.youtube.com/embed/u4RX4SyIzj8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6 bg-gray-900">
+                        <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - Glorious Aurora - PNW 2024.10.10</h3>
+                    </div>
                 </div>
+            </div>
         </div>
     </section>
 
@@ -478,7 +520,7 @@
 
     <footer class="section-bg-dark text-gray-500 py-8 text-center">
         <div class="container mx-auto px-4">
-            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a></p>
+            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a> <a href="https://www.youtube.com/@EdwinHwu" target="_blank">🧪</a> <a href="https://www.youtube.com/watch?v=rJPKTCdk-WI" target="_blank">🔬</a></p>
         </div>
     </footer>
 
