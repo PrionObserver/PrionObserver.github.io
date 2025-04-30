@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quinn Kinata - Mega Reading List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Deep Navy background - used as fallback/base */
+            background-color: #1a2634;
+            color: #e0e6ed; /* Off-White/Light Gray default text */
+            line-height: 1.6; /* Improved readability */
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default body padding */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            position: relative; /* Needed for absolute positioning of canvas */
+            min-height: 100vh; /* Ensure body covers at least the viewport height */
+
+            /* Fractal Background Image (Reverted) */
+            /* Replace 'YOUR_FRACTAL_IMAGE_URL.jpg' with the URL of your fractal image */
+            background-image: url('https://placehold.co/1a2634/e0e6ed'); /* Placeholder: solid color background */
+            background-repeat: repeat; /* Repeat the image to cover the background */
+            background-size: auto; /* Adjust as needed, 'cover' or 'contain' might also work depending on the image */
+            background-attachment: fixed; /* Keep the background fixed while scrolling */
+        }
+
+        /* Adjust text color for specific elements */
+        h1, h2 {
+            color: #ffffff; /* White color for headings */
+            font-weight: 700; /* Ensure headings are bold */
+        }
+
+        /* Link colors */
+        a {
+            color: #5ac8fa; /* Bright Sky Blue */
+            text-decoration: none; /* Remove default underline */
+            transition: color 0.3s ease; /* Smooth color transition */
+        }
+        a:hover {
+            color: #89d0f8; /* Lighter blue on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+        /* Specific link colors in header */
+        .header-links a {
+             color: #a0ced9; /* Lighter blue for header links */
+        }
+         .header-links a:hover {
+            color: #ffffff; /* Lighter on hover */
+         }
+
+         /* Footer text color */
+         footer p {
+            color: #9ba3af; /* Medium Gray for footer text */
+         }
+
+         /* Apply a semi-transparent background to sections without section-bg-dark */
+         section {
+             background-color: rgba(10, 15, 20, 0.98); /* Even darker background */
+         }
+
+
+        /* --- Mega Reading List Styles --- */
+        #mega-reading-list {
+            color: #9ba3af; /* Lighter gray text */
+            padding: 30px 0; /* Add padding */
+            font-size: 0.9rem; /* Smaller text for compactness */
+        }
+
+        #mega-reading-list h2 {
+            color: #ffffff; /* White for section title */
+            border-bottom: 2px solid #da70d6; /* Orchid underline */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #mega-reading-list h4 {
+            color: #ffd700; /* Gold for category titles */
+            margin-top: 20px;
+            margin-bottom: 8px; /* Reduced margin */
+            font-weight: 600;
+            display: flex; /* Use flexbox for header links */
+            justify-content: space-between; /* Space out title and links */
+            align-items: center; /* Vertically align items */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Solid border below header */
+            padding-bottom: 5px; /* Padding below border */
+        }
+
+        #mega-reading-list h4 .header-links {
+            font-size: 0.7em; /* Smaller font for header links */
+            font-weight: normal; /* Normal weight for links */
+            display: flex; /* Use flexbox for header links */
+            gap: 10px; /* Space between header links */
+            flex-shrink: 0; /* Prevent links from shrinking */
+        }
+
+         #mega-reading-list h4 .header-links a {
+             color: #a0ced9; /* Lighter blue for header links */
+             text-decoration: underline;
+         }
+
+         #mega-reading-list h4 .header-links a:hover {
+             color: #ffffff; /* White on hover */
+         }
+
+
+        #mega-reading-list ul {
+            list-style: none; /* Remove default list style */
+            padding: 0;
+            margin: 0;
+        }
+
+        #mega-reading-list li {
+            margin-bottom: 2px; /* Further reduced margin */
+            padding: 3px 0; /* Further reduced padding */
+            display: flex; /* Use flexbox for layout */
+            justify-content: space-between; /* Space out content */
+            align-items: flex-start; /* Align items to the top */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05); /* Subtle separator */
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        }
+
+        #mega-reading-list li:last-child {
+            border-bottom: none; /* No border on the last item */
+        }
+
+        #mega-reading-list li .item-details {
+            display: flex; /* Use flexbox for title and author */
+            align-items: baseline; /* Align baseline of text */
+            flex-grow: 1; /* Allow details to grow */
+            margin-right: 10px; /* Space between details and links */
+             flex-wrap: wrap; /* Allow title/author to wrap together */
+        }
+
+
+        #mega-reading-list li strong {
+             color: #e0e6ed; /* Off-White for titles */
+             flex-shrink: 0; /* Prevent title from shrinking */
+        }
+
+        #mega-reading-list li .author {
+             color: #9ba3af; /* Match list text color for author */
+             font-size: 0.8em; /* Smaller font for author */
+             margin-left: 5px; /* Space between title and author */
+             flex-shrink: 0; /* Prevent author from shrinking */
+        }
+
+        #mega-reading-list .resource-links {
+            flex-shrink: 0; /* Prevent links from shrinking */
+            display: flex; /* Use flexbox for links */
+            gap: 4px; /* Reduced space between link buttons */
+            align-items: center; /* Vertically align link buttons */
+             margin-top: 2px; /* Small margin to align better if details wrap */
+             flex-wrap: nowrap; /* Prevent links themselves from wrapping onto multiple lines */
+        }
+
+        #mega-reading-list .resource-links a {
+            color: #a0ced9; /* Lighter blue for links */
+            font-size: 0.7em; /* Even smaller link text */
+            text-decoration: none; /* No underline by default */
+            padding: 1px 3px; /* Reduced padding to make them smaller */
+            border: 1px solid rgba(160, 206, 217, 0.3); /* Subtle border */
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+         #mega-reading-list .resource-links a:hover {
+             text-decoration: none; /* No underline on hover */
+             background-color: rgba(160, 206, 217, 0.1); /* Subtle background on hover */
+             border-color: #a0ced9;
+         }
+
+        /* Highlight style for Fusion relevant books */
+        .fusion-highlight strong {
+            color: #ff8c00; /* Dark Orange highlight for title */
+        }
+         .fusion-highlight .author {
+            color: #ff8c00; /* Dark Orange highlight for author */
+         }
+
+         /* Styles for the footer navigation links */
+        .footer-nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between links */
+            margin-top: 10px; /* Space above links */
+        }
+
+        .footer-nav-links a {
+             color: #9ba3af; /* Match footer text color */
+             text-decoration: none;
+             transition: color 0.3s ease;
+        }
+
+         .footer-nav-links a:hover {
+             color: #e0e6ed; /* Lighter on hover */
+             text-decoration: underline;
+         }
+
+
+    </style>
+</head>
+<body>
+
+    <section id="mega-reading-list">
+        <div class="container mx-auto px-4">
+             <h2 class="text-3xl text-center mb-16">Mega Reading List</h2>
+             <p class="text-center text-gray-400 mb-8">A comprehensive list of resources across STEM fields relevant to advanced technology and research.</p>
+
+            <h4>Mathematics
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+mathematics+textbooks" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+advances+mathematics&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj86" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                 <li><div class="item-details"><strong>Calculus (Any Standard Textbook, e.g., Stewart, Thomas, Adams)</strong> <span class="author">by Various Authors</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=calculus+textbook" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=calculus+textbook" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=calculus+textbook" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=calculus+textbook&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=calculus+textbook" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li><div class="item-details"><strong>Linear Algebra and Its Applications</strong> <span class="author">by Gilbert Strang</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Linear+Algebra+and+Its+Applications+Gilbert+Strang" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Linear+Algebra+and+Its+Applications+Gilbert+Strang" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Linear+Algebra+and+Its+Applications+Gilbert+Strang" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Linear+Algebra+and+Its+Applications+Gilbert+Strang&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Linear+Algebra+and+Its+Applications+Gilbert+Strang" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li><div class="item-details"><strong>Differential Equations and Linear Algebra</strong> <span class="author">by Stephen W. Goode and Scott A. Annin</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Differential+Equations+and+Linear+Algebra+Stephen+W.+Goode+Scott+A.+Annin" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Differential+Equations+and+Linear+Algebra+Stephen+W.+Goode+Scott+A.+Annin" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Differential+Equations+and+Linear+Algebra+Stephen+W.+Goode+Scott+A.+Annin" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Differential+Equations+and+Linear+Algebra+Stephen+W.+Goode+and+Scott+A.+Annin&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Differential+Equations+and+Linear+Algebra+Stephen+W.+Goode+Scott+A.+Annin" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li><div class="item-details"><strong>Probability and Statistics for Engineering and the Sciences</strong> <span class="author">by Jay L. Devore</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Probability+and+Statistics+for+Engineering+and+the+Sciences+Jay+L.+Devore" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Probability+and+Statistics+for+Engineering+and+the+Sciences+Jay+L.+Devore" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Probability+and+Statistics+for+Engineering+and+the+Sciences+Jay+L.+Devore" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Probability+and+Statistics+for+Engineering+and+the+Sciences+Jay+L.+Devore&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Probability+and+Statistics+for+Engineering+and+the+Sciences+Jay+L.+Devore" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+            </ul>
+
+            <h4>Physics
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+physics+textbooks" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+advances+physics&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj87" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                 <li><div class="item-details"><strong>Fundamentals of Physics</strong> <span class="author">by David Halliday, Robert Resnick, Jearl Walker</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fundamentals+of+Physics+Halliday+Resnick+Walker" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fundamentals+of+Physics+Halliday+Resnick+Walker" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fundamentals+of+Physics+Halliday+Resnick+Walker" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fundamentals+of+Physics+David+Halliday%2C+Robert+Resnick%2C+Jearl+Walker&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fundamentals+of+Physics+Halliday+Resnick+Walker" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li><div class="item-details"><strong>University Physics with Modern Physics</strong> <span class="author">by Hugh D. Young and Roger A. Freedman</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=University+Physics+with+Modern+Physics+Hugh+D.+Young+Roger+A.+Freedman" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=University+Physics+with+Modern+Physics+Hugh+D.+Young+Roger+A.+Freedman" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=University+Physics+with+Modern+Physics+Hugh+D.+Young+Roger+A.+Freedman" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=University+Physics+with+Modern+Physics+Hugh+D.+Young+and+Roger+A.+Freedman&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=University+Physics+with+Modern+Physics+Hugh+D.+Young+Roger+A.+Freedman" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li><div class="item-details"><strong>Classical Mechanics</strong> <span class="author">by Herbert Goldstein, Charles P. Poole Jr., John L. Safko</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Classical+Mechanics+Herbert+Goldstein+Charles+P.+Poole+Jr.+John+L.+Safko" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Classical+Mechanics+Herbert+Goldstein+Charles+P.+Poole+Jr.+John+L.+Safko" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Classical+Mechanics+Herbert+Goldstein+Charles+P.+Poole+Jr.+John+L.+Safko" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Classical+Mechanics+Herbert+Goldstein%2C+Charles+P.+Poole+Jr.%2C+John+L.+Safko&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Classical+Mechanics+Herbert+Goldstein+Charles+P.+Poole+Jr.+John+L.+Safko" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li><div class="item-details"><strong>Introduction to Electrodynamics</strong> <span class="author">by David J. Griffiths</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Introduction+to+Electrodynamics+David+J.+Griffiths" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Introduction+to+Electrodynamics+David+J.+Griffiths" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Introduction+to+Electrodynamics+David+J.+Griffiths" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Introduction+to+Electrodynamics+David+J.+Griffiths&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Introduction+to+Electrodynamics+David+J.+Griffiths" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li><div class="item-details"><strong>Quantum Mechanics</strong> <span class="author">by David J. Griffiths</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Quantum+Mechanics+David+J.+Griffiths" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Quantum+Mechanics+David+J.+Griffiths" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Quantum+Mechanics+David+J.+Griffiths" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Quantum+Mechanics+David+J.+Griffiths&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Quantum+Mechanics+David+J.+Griffiths" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+                    <li class="fusion-highlight"><div class="item-details"><strong>Introduction to Plasma Physics and Controlled Fusion</strong> <span class="author">by Francis F. Chen</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Introduction+to+Plasma+Physics+and+Controlled+Fusion+Francis+F.+Chen" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Introduction+to+Plasma+Physics+and+Controlled+Fusion+Francis+F.+Chen" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Introduction+to+Plasma+Physics+and+Controlled+Fusion+Francis+F.+Chen" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Introduction+to+Plasma+Physics+and+Controlled+Fusion+Francis+F.+Chen&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Introduction+to+Plasma+Physics+and+Controlled+Fusion+Francis+F.+Chen" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Fundamentals of Plasma Physics</strong> <span class="author">by J. A. Bittencourt</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fundamentals+of+Plasma+Physics+J.+A.+Bittencourt" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fundamentals+of+Plasma+Physics+J.+A.+Bittencourt" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fundamentals+of+Plasma+Physics+J.+A.+Bittencourt" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fundamentals+of+Plasma+Physics+J.+A.+Bittencourt&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fundamentals+of+Plasma+Physics+J.+A.+Bittencourt" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>Physics of Fully Ionized Plasmas</strong> <span class="author">by Lyman Spitzer</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Physics+of+Fully+Ionized+Plasmas+Lyman+Spitzer" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Physics+of+Fully+Ionized+Plasmas+Lyman+Spitzer" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Physics+of+Fully+Ionized+Plasmas+Lyman+Spitzer" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Physics+of+Fully+Ionized+Plasmas+Lyman+Spitzer&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Physics+of+Fully+Ionized+Plasmas+Lyman+Spitzer" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Plasma Physics and Fusion Energy</strong> <span class="author">by Jeffrey P. Freidberg</span></div>
+                        <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Plasma+Physics+and+Fusion+Energy+Jeffrey+P.+Freidberg" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Plasma+Physics+and+Fusion+Energy+Jeffrey+P.+Freidberg" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Plasma+Physics+and+Fusion+Energy+Jeffrey+P.+Freidberg" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Plasma+Physics+and+Fusion+Energy+Jeffrey+P.+Freidberg&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Plasma+Physics+and+Fusion+Energy+Jeffrey+P.+Freidberg" target="_blank">[Sci-Hub]</a>
+                    </span>
+                    </li>
+                     <li class="fusion-highlight"><div class="item-details"><strong>Controlled Fusion and Plasma Physics: A Tutorial</strong> <span class="author">by Walter M. Stacey</span></div>
+                         <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Controlled+Fusion+and+Plasma+Physics+A+Tutorial+Walter+M.+Stacey" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Controlled+Fusion+and+Plasma+Physics+A+Tutorial+Walter+M.+Stacey" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Controlled+Fusion+and+Plasma+Physics+A+Tutorial+Walter+M.+Stacey" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Controlled+Fusion+and+Plasma+Physics%3A+A+Tutorial+Walter+M.+Stacey&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Controlled+Fusion+and+Plasma+Physics+A+Tutorial+Walter+M.+Stacey" target="_blank">[Sci-Hub]</a>
+                    </span>
+                     </li>
+                      <li class="fusion-highlight"><div class="item-details"><strong>Fusion Plasma Physics</strong> <span class="author">by Weston M. Stacey</span></div>
+                          <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fusion+Plasma+Physics+Weston+M.+Stacey" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fusion+Plasma+Physics+Weston+M.+Stacey" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fusion+Plasma+Physics+Weston+M.+Stacey" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fusion+Plasma+Physics+Weston+M.+Stacey&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fusion+Plasma+Physics+Weston+M.+Stacey" target="_blank">[Sci-Hub]</a>
+                    </span>
+                      </li>
+            </ul>
+
+            <h4>High Voltage & Pulsed Power
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+pulsed+power" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+pulsed+power&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/1JbvGFYwPvQ7" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li class="fusion-highlight"><div class="item-details"><strong>High-Voltage Engineering Fundamentals</strong> <span class="author">by E. Kuffel, W.S. Zaengl, J. Kuffel</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=High-Voltage+Engineering+Fundamentals+Kuffel" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=High-Voltage+Engineering+Fundamentals+Kuffel" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=High-Voltage+Engineering+Fundamentals+Kuffel" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=High-Voltage+Engineering+Fundamentals+Kuffel&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=High-Voltage+Engineering+Fundamentals+Kuffel" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Pulsed Power Systems: Principles and Applications</strong> <span class="author">by Hansjoachim Bluhm</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Pulsed+Power+Systems+Principles+and+Applications+Hansjoachim+Bluhm" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Pulsed+Power+Systems+Principles+and+Applications+Hansjoachim+Bluhm" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Pulsed+Power+Systems+Principles+and+Applications+Hansjoachim+Bluhm" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Pulsed+Power+Systems+Principles+and+Applications+Hansjoachim+Bluhm&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Pulsed+Power+Systems+Principles+and+Applications+Hansjoachim+Bluhm" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Fundamentals of High Power Pulsed Nanoelectronics</strong> <span class="author">by Victor F. Tarasenko and Evgeniy Kh. Baksht</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fundamentals+of+High+Power+Pulsed+Nanoelectronics+Victor+F.+Tarasenko+Evgeniy+Kh.+Baksht" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fundamentals+of+High+Power+Pulsed+Nanoelectronics+Victor+F.+Tarasenko+Evgeniy+Kh.+Baksht" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fundamentals+of+High+Power+Pulsed+Nanoelectronics+Victor+F.+Tarasenko+Evgeniy+Kh.+Baksht" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fundamentals+of+High+Power+Pulsed+Nanoelectronics+Victor+F.+Tarasenko+Evgeniy+Kh.+Baksht&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fundamentals+of+High+Power+Pulsed+Nanoelectronics+Victor+F.+Tarasenko+Evgeniy+Kh.+Baksht" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>The Physics and Technology of Particle and Photon Beams</strong> <span class="author">by Howard Wiedemann</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Physics+and+Technology+of+Particle+and+Photon+Beams+Howard+Wiedemann" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Physics+and+Technology+of+Particle+and+Photon+Beams+Howard+Wiedemann" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Physics+and+Technology+of+Particle+and+Photon+Beams+Howard+Wiedemann" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Physics+and+Technology+of+Particle+and+Photon+Beams+Howard+Wiedemann&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Physics+and+Technology+of+Particle+and+Photon+Beams+Howard+Wiedemann" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>High-Power Pulsed Spindt-Type Cold Cathodes</strong> <span class="author">by George N. Fursey</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=High-Power+Pulsed+Spindt-Type+Cold+Cathodes+George+N.+Fursey" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=High-Power+Pulsed+Spindt-Type+Cold+Cathodes+George+N.+Fursey" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=High-Power+Pulsed+Spindt-Type+Cold+Cathodes+George+N.+Fursey" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=High-Power+Pulsed+Spindt-Type+Cold+Cathodes+George+N.+Fursey&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=High-Power+Pulsed+Spindt-Type+Cold+Cathodes+George+N.+Fursey" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Power Electronics: Converters, Applications, and Design</strong> <span class="author">by Ned Mohan, Tore M. Undeland, William P. Robbins</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Power+Electronics+Converters+Applications+and+Design+Mohan+Undeland+Robbins" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Power+Electronics+Converters+Applications+and+Design+Mohan+Undeland+Robbins" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Power+Electronics+Converters+Applications+and+Design+Mohan+Undeland+Robbins" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Power+Electronics%3A+Converters%2C+Applications%2C+and+Design+Mohan+Undeland+Robbins&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Power+Electronics+Converters+Applications+and+Design+Mohan+Undeland+Robbins" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+                    <li class="fusion-highlight"><div class="item-details"><strong>Fundamentals of Power Electronics</strong> <span class="author">by Robert W. Erickson and Dragan Maksimovic</span></div>
+                        <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fundamentals+of+Power+Electronics+Robert+W.+Erickson+Dragan+Maksimovic" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fundamentals+of+Power+Electronics+Robert+W.+Erickson+Dragan+Maksimovic" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fundamentals+of+Power+Electronics+Robert+W.+Erickson+Dragan+Maksimovic" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fundamentals+of+Power+Electronics+Robert+W.+Erickson+and+Dragan+Maksimovic&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fundamentals+of+Power+Electronics+Robert+W.+Erickson+Dragan+Maksimovic" target="_blank">[Sci-Hub]</a>
+                    </span>
+                    </li>
+            </ul>
+
+             <h4>Vacuum Technology
+                  <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+vacuum+technology" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+vacuum+technology&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/1JbvGFYwPvQ8" target="_blank">[Videos]</a>
+                </span>
+             </h4>
+             <ul>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Scientific Foundations of Vacuum Technique</strong> <span class="author">by Saul Dushman and J. M. Lafferty</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Scientific+Foundations+of+Vacuum+Technique+Saul+Dushman+J.+M.+Lafferty" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Scientific+Foundations+of+Vacuum+Technique+Saul+Dushman+J.+M.+Lafferty" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Scientific+Foundations+of+Vacuum+Technique+Saul+Dushman+J.+M.+Lafferty" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Scientific+Foundations+of+Vacuum+Technique+Saul+Dushman+J.+M.+Lafferty&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Scientific+Foundations+of+Vacuum+Technique+Saul+Dushman+J.+M.+Lafferty" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>Vacuum Technology: An Introduction</strong> <span class="author">by Alec Chambers</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Vacuum+Technology+An+Introduction+Alec+Chambers" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Vacuum+Technology+An+Introduction+Alec+Chambers" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Vacuum+Technology+An+Introduction+Alec+Chambers" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Vacuum+Technology%3A+An+Introduction+Alec+Chambers&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Vacuum+Technology+An+Introduction+Alec+Chambers" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Handbook of Vacuum Science and Technology</strong> <span class="author">edited by Dorothy Hoffman, Bruce Singh, and John Thomas Yates Jr.</span></div>
+                        <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Handbook+of+Vacuum+Science+and+Technology+Dorothy+Hoffman+Bruce+Singh+John+Thomas+Yates+Jr" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Handbook+of+Vacuum+Science+and+Technology+Dorothy+Hoffman+Bruce+Singh+John+Thomas+Yates+Jr" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Handbook+of+Vacuum+Science+and+Technology+Dorothy+Hoffman+Bruce+Singh+John+Thomas+Yates+Jr" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Handbook+of+Vacuum+Science+and+Technology+Dorothy+Hoffman%2C+Bruce+Singh%2C+and+John+Thomas+Yates+Jr&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Handbook+of+Vacuum+Science+and+Technology+Dorothy+Hoffman+Bruce+Singh+John+Thomas+Yates+Jr" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+                    <li class="fusion-highlight"><div class="item-details"><strong>Foundations of Vacuum Science and Technology</strong> <span class="author">by J. M. Lafferty</span></div>
+                         <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Foundations+of+Vacuum+Science+and+Technology+J.+M.+Lafferty" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Foundations+of+Vacuum+Science+and+Technology+J.+M.+Lafferty" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Foundations+of+Vacuum+Science+and+Technology+J.+M.+Lafferty" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Foundations+of+Vacuum+Science+and+Technology+J.+M.+Lafferty&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Foundations+of+Vacuum+Science+and+Technology+J.+M.+Lafferty" target="_blank">[Sci-Hub]</a>
+                    </span>
+                    </li>
+             </ul>
+
+            <h4>Materials Science
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+materials+science" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+materials+science&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/1JbvGFYwPvQ9" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li class="fusion-highlight"><div class="item-details"><strong>Materials Science and Engineering: An Introduction</strong> <span class="author">by William D. Callister Jr. and David G. Rethwisch</span></div>
+                    <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Materials+Science+and+Engineering+An+Introduction+William+D.+Callister+Jr.+David+G.+Rethwisch" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Materials+Science+and+Engineering+An+Introduction+William+D.+Callister+Jr.+David+G.+Rethwisch" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Materials+Science+and+Engineering+An+Introduction+William+D.+Callister+Jr.+David+G.+Rethwisch" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Materials+Science+and+Engineering%3A+An+Introduction+William+D.+Callister+Jr.+and+David+G.+Rethwisch&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Materials+Science+and+Engineering+An+Introduction+William+D.+Callister+Jr.+David+G.+Rethwisch" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Physical Metallurgy Principles</strong> <span class="author">by Robert E. Reed-Hill and Reza Abbaschian</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Physical+Metallurgy+Principles+Robert+E.+Reed-Hill+Reza+Abbaschian" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Physical+Metallurgy+Principles+Robert+E.+Reed-Hill+Reza+Abbaschian" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Physical+Metallurgy+Principles+Robert+E.+Reed-Hill+Reza+Abbaschian" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Physical+Metallurgy+Principles+Robert+E.+Reed-Hill+and+Reza+Abbaschian&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Physical+Metallurgy+Principles+Robert+E.+Reed-Hill+Reza+Abbaschian" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>The Structure and Properties of Materials</strong> <span class="author">by John Wulff, Richard M. Rose, Lawrence A. Shepard, and John F. Wulff</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Structure+and+Properties+of+Materials+John+Wulff+Richard+M.+Rose+Lawrence+A.+Shepard+John+F.+Wulff" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Structure+and+Properties+of+Materials+John+Wulff+Richard+M.+Rose+Lawrence+A.+Shepard+John+F.+Wulff" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Structure+and+Properties+of+Materials+John+Wulff+Richard+M.+Rose+Lawrence+A.+Shepard+John+F.+Wulff" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Structure+and+Properties+of+Materials+John+Wulff%2C+Richard+M.+Rose%2C+Lawrence+A.+Shepard%2C+and+John+F.+Wulff&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Structure+and+Properties+of+Materials+John+Wulff+Richard+M.+Rose+Lawrence+A.+Shepard+John+F.+Wulff" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Materials Science for Engineers</strong> <span class="author">by James F. Shackelford</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Materials+Science+for+Engineers+James+F.+Shackelford" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Materials+Science+for+Engineers+James+F.+Shackelford" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Materials+Science+for+Engineers+James+F.+Shackelford" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Materials+Science+for+Engineers+James+F.+Shackelford&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Materials+Science+for+Engineers+James+F.+Shackelford" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Radiation Safety & Health Physics
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+health+physics" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+health+physics&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj80" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li class="fusion-highlight"><div class="item-details"><strong>Introduction to Health Physics</strong> <span class="author">by Herman Cember and Thomas E. Johnson</span></div>
+                    <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Introduction+to+Health+Physics+Herman+Cember+Thomas+E.+Johnson" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Introduction+to+Health+Physics+Herman+Cember+Thomas+E.+Johnson" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Introduction+to+Health+Physics+Herman+Cember+Thomas+E.+Johnson" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Introduction+to+Health+Physics+Herman+Cember+and+Thomas+E.+Johnson&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Introduction+to+Health+Physics+Herman+Cember+Thomas+E.+Johnson" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Radiation Detection and Measurement</strong> <span class="author">by Glenn F. Knoll</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Radiation+Detection+and+Measurement+Glenn+F.+Knoll" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Radiation+Detection+and+Measurement+Glenn+F.+Knoll" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Radiation+Detection+and+Measurement+Glenn+F.+Knoll" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Radiation+Detection+and+Measurement+Glenn+F.+Knoll&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Radiation+Detection+and+Measurement+Glenn+F.+Knoll" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>The Health Physics and Radiological Health Handbook</strong> <span class="author">by Bernard Shleien, Lester A. Slaback Jr., and Brian K. Birky</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Health+Physics+and+Radiological+Health+Handbook+Bernard+Shleien+Lester+A.+Slaback+Jr.+Brian+K.+Birky" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Health+Physics+and+Radiological+Health+Handbook+Bernard+Shleien+Lester+A.+Slaback+Jr.+Brian+K.+Birky" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Health+Physics+and+Radiological+Health+Handbook+Bernard+Shleien+Lester+A.+Slaback+Jr.+Brian+K.+Birky" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Health+Physics+and+Radiological+Health+Handbook+Bernard+Shleien%2C+Lester+A.+Slaback+Jr.%2C+and+Brian+K.+Birky&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Health+Physics+and+Radiological+Health+Handbook+Bernard+Shleien+Lester+A.+Slaback+Jr.+Brian+K.+Birky" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Machining & Fabrication
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+machining+fabrication" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+machining+fabrication&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj81" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li class="fusion-highlight"><div class="item-details"><strong>Machinery's Handbook</strong> <span class="author">by Erik Oberg, Franklin D. Jones, Horton Ryerson Haynes, and Christopher J. McCauley</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Machinery%27s+Handbook+Oberg+Jones+Haynes+McCauley" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Machinery%27s+Handbook+Oberg+Jones+Haynes+McCauley" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Machinery%27s+Handbook+Oberg+Jones+Haynes+McCauley" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Machinery%27s+Handbook+Oberg%2C+Franklin+D.+Jones%2C+Horton+Ryerson+Haynes%2C+and+Christopher+J.+McCauley&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Machinery%27s+Handbook+Oberg+Jones+Haynes+McCauley" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Machine Tool Practices</strong> <span class="author">by Richard R. Kibbe, John E. Neely, Roland O. Warren, and Karl H. White</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Machine+Tool+Practices+Richard+R.+Kibbe+John+E.+Neely+Roland+O.+Warren+Karl+H.+White" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Machine+Tool+Practices+Richard+R.+Kibbe+John+E.+Neely+Roland+O.+Warren+Karl+H.+White" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Machine+Tool+Practices+Richard+R.+Kibbe+John+E.+Neely+Roland+O.+Warren+Karl+H.+White" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Machine+Tool+Practices+Richard+R.+Kibbe%2C+John+E.+Neely%2C+Roland+O.+Warren%2C+and+Karl+H.+White&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Machine+Tool+Practices+Richard+R.+Kibbe+John+E.+Neely+Roland+O.+Warren+Karl+H.+White" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>Sheet Metal Handbook</strong> <span class="author">by Ron Fournier</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Sheet+Metal+Handbook+Ron+Fournier" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Sheet+Metal+Handbook+Ron+Fournier" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Sheet+Metal+Handbook+Ron+Fournier" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Sheet+Metal+Handbook+Ron+Fournier&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Sheet+Metal+Handbook+Ron+Fournier" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Welding Handbook (Any Edition)</strong> <span class="author">by American Welding Society (AWS)</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Welding+Handbook+American+Welding+Society" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Welding+Handbook+American+Welding+Society" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Welding+Handbook+American+Welding+Society" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Welding+Handbook+American+Welding+Society&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Welding+Handbook+American+Welding+Society" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Electrical Engineering & Electronics
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+electrical+engineering" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+electrical+engineering&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj82" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li class="fusion-highlight"><div class="item-details"><strong>The Art of Electronics</strong> <span class="author">by Paul Horowitz and Winfield Hill</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Art+of+Electronics+Paul+Horowitz+Winfield+Hill" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Art+of+Electronics+Paul+Horowitz+Winfield+Hill" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Art+of+Electronics+Paul+Horowitz+Winfield+Hill" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Art+of+Electronics+Paul+Horowitz+and+Winfield+Hill&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Art+of+Electronics+Paul+Horowitz+Winfield+Hill" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Principles of Electric Circuits: Conventional Current Version</strong> <span class="author">by Thomas L. Floyd</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Principles+of+Electric+Circuits+Conventional+Current+Version+Thomas+L.+Floyd" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Principles+of+Electric+Circuits+Conventional+Current+Version+Thomas+L.+Floyd" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Principles+of+Electric+Circuits+Conventional+Current+Version+Thomas+L.+Floyd" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Principles+of+Electric+Circuits%3A+Conventional+Current+Version+Thomas+L.+Floyd&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Principles+of+Electric+Circuits+Conventional+Current+Version+Thomas+L.+Floyd" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>Practical Electronics for Inventors</strong> <span class="author">by Paul Scherz and Simon Monk</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Practical+Electronics+for+Inventors+Paul+Scherz+Simon+Monk" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Practical+Electronics+for+Inventors+Paul+Scherz+Simon+Monk" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Practical+Electronics+for+Inventors+Paul+Scherz+Simon+Monk" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Practical+Electronics+for+Inventors+Paul+Scherz+and+Simon+Monk&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Practical+Electronics+for+Inventors+Paul+Scherz+Simon+Monk" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Foundations of Analog and Digital Electronic Circuits</strong> <span class="author">by Anant Agarwal and Jeffrey Lang</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Foundations+of+Analog+and+Digital+Electronic+Circuits+Anant+Agarwal+Jeffrey+Lang" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Foundations+of+Analog+and+Digital+Electronic+Circuits+Anant+Agarwal+Jeffrey+Lang" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Foundations+of+Analog+and+Digital+Electronic+Circuits+Anant+Agarwal+Jeffrey+Lang" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Foundations+of+Analog+and+Digital+Electronic+Circuits+Anant+Agarwal+and+Jeffrey+Lang&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Foundations+of+Analog+and+Digital+Electronic+Circuits+Anant+Agarwal+Jeffrey+Lang" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Mechanical Engineering & Design
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+mechanical+engineering+design" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+mechanical+engineering+design&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj83" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                 <li class="fusion-highlight"><div class="item-details"><strong>Shigley's Mechanical Engineering Design</strong> <span class="author">by Richard G. Budynas and J. Keith Nisbett</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Shigley%27s+Mechanical+Engineering+Design+Richard+G.+Budynas+J.+Keith+Nisbett" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Shigley%27s+Mechanical+Engineering+Design+Richard+G.+Budynas+J.+Keith+Nisbett" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Shigley%27s+Mechanical+Engineering+Design+Richard+G.+Budynas+J.+Keith+Nisbett" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Shigley%27s+Mechanical+Engineering+Design+Richard+G.+Budynas+and+J.+Keith+Nisbett&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Shigley%27s+Mechanical+Engineering+Design+Richard+G.+Budynas+J.+Keith+Nisbett" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details"><strong>Fundamentals of Machine Component Design</strong> <span class="author">by Robert C. Juvinall and Kurt M. Marshek</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Fundamentals+of+Machine+Component+Design+Robert+C.+Juvinall+Kurt+M.+Marshek" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Fundamentals+of+Machine+Component+Design+Robert+C.+Juvinall+Kurt+M.+Marshek" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Fundamentals+of+Machine+Component+Design+Robert+C.+Juvinall+Kurt+M.+Marshek" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Fundamentals+of+Machine+Component+Design+Robert+C.+Juvinall+and+Kurt+M.+Marshek&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Fundamentals+of+Machine+Component+Design+Robert+C.+Juvinall+Kurt+M.+Marshek" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details"><strong>Marks' Standard Handbook for Mechanical Engineers</strong> <span class="author">edited by Eugene A. Avallone, Theodore Baumeister III, and Ali Sadegh</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Marks%27+Standard+Handbook+for+Mechanical+Engineers+Avallone+Baumeister+Sadegh" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Marks%27+Standard+Handbook+for+Mechanical+Engineers+Avallone+Baumeister+Sadegh" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Marks%27+Standard+Handbook+for+Mechanical+Engineers+Avallone+Baumeister+Sadegh" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Marks%27+Standard+Handbook+for+Mechanical+Engineers+Eugene+A.+Avallone%2C+Theodore+Baumeister+III%2C+and+Ali+Sadegh&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Marks%27+Standard+Handbook+for+Mechanical+Engineers+Avallone+Baumeister+Sadegh" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Software & Computational
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+computational+physics" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+computational+physics&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj84" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <p class="text-gray-400 text-sm italic mb-4">(Relevant for roles like Software Engineer, Computational Plasma Scientist, Firmware Engineer)</p>
+            <ul>
+                <li><div class="item-details"><strong>Clean Code: A Handbook of Agile Software Craftsmanship</strong> <span class="author">by Robert C. Martin</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Clean+Code+A+Handbook+of+Agile+Software+Craftsmanship+Robert+C.+Martin" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Clean+Code+A+Handbook+of+Agile+Software+Craftsmanship+Robert+C.+Martin" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Clean+Code+A+Handbook+of+Agile+Software+Craftsmanship+Robert+C.+Martin" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Clean+Code%3A+A+Handbook+of+Agile+Software+Craftsmanship+Robert+C.+Martin&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Clean+Code+A+Handbook+of+Agile+Software+Craftsmanship+Robert+C.+Martin" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li><div class="item-details"><strong>Structure and Interpretation of Computer Programs</strong> <span class="author">by Harold Abelson and Gerald Jay Sussman with Julie Sussman</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Structure+and+Interpretation+of+Computer+Programs+Harold+Abelson+Gerald+Jay+Sussman+Julie+Sussman" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Structure+and+Interpretation+of+Computer+Programs+Harold+Abelson+Gerald+Jay+Sussman+Julie+Sussman" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Structure+and+Interpretation+of+Computer+Programs+Harold+Abelson+Gerald+Jay+Sussman+Julie+Sussman" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Structure+and+Interpretation+of+Computer+Programs+Harold+Abelson+and+Gerald+Jay+Sussman+with+Julie+Sussman&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Structure+and+Interpretation+of+Computer+Programs+Harold+Abelson+Gerald+Jay+Sussman+Julie+Sussman" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li><div class="item-details"><strong>Numerical Recipes (Any Edition/Language)</strong> <span class="author">by William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Numerical+Recipes+Press+Teukolsky+Vetterling+Flannery" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Numerical+Recipes+Press+Teukolsky+Vetterling+Flannery" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Numerical+Recipes+Press+Teukolsky+Vetterling+Flannery" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Numerical+Recipes+William+H.+Press%2C+Saul+A.+Teukolsky%2C+William+T.+Vetterling%2C+Brian+P.+Flannery&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Numerical+Recipes+Press+Teukolsky+Vetterling+Flannery" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li><div class="item-details"><strong>The Art of Computer Programming (Volumes 1-4A)</strong> <span class="author">by Donald Knuth</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Art+of+Computer+Programming+Donald+Knuth" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Art+of+Computer+Programming+Donald+Knuth" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Art+of+Computer+Programming+Donald+Knuth" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Art+of+Computer+Programming+Donald+Knuth&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Art+of+Computer+Programming+Donald+Knuth" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+            <h4>Data Visualization
+                 <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+data+visualization" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+data+visualization&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj88" target="_blank">[Videos]</a>
+                </span>
+            </h4>
+            <ul>
+                <li><div class="item-details"><strong>The Visual Display of Quantitative Information</strong> <span class="author">by Edward R. Tufte</span></div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=The+Visual+Display+of+Quantitative+Information+Edward+R.+Tufte" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=The+Visual+Display+of+Quantitative+Information+Edward+R.+Tufte" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=The+Visual+Display+of+Quantitative+Information+Edward+R.+Tufte" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=The+Visual+Display+of+Quantitative+Information+Edward+R.+Tufte&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=The+Visual+Display+of+Quantitative+Information+Edward+R.+Tufte" target="_blank">[Sci-Hub]</a>
+                    </span>
+                </li>
+                 <li><div class="item-details"><strong>Visualization Analysis and Design</strong> <span class="author">by Tamara Munzner</span></div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Visualization+Analysis+and+Design+Tamara+Munzner" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Visualization+Analysis+and+Design+Tamara+Munzner" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Visualization+Analysis+and+Design+Tamara+Munzner" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Visualization+Analysis+and+Design+Tamara+Munzner&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Visualization+Analysis+and+Design+Tamara+Munzner" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li><div class="item-details"><strong>Interactive Data Visualization for the Web</strong> <span class="author">by Scott Murray</span></div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=Interactive+Data+Visualization+for+the+Web+Scott+Murray" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=Interactive+Data+Visualization+for+the+Web+Scott+Murray" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=Interactive+Data+Visualization+for+the+Web+Scott+Murray" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=Interactive+Data+Visualization+for+the+Web+Scott+Murray&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=Interactive+Data+Visualization+for+the+Web+Scott+Murray" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+
+             <h4>Standards & Safety
+                  <span class="header-links">
+                    <a href="https://scholar.google.com/scholar?q=highly+cited+papers+electrical+safety+standards" target="_blank">[Top Papers]</a>
+                    <a href="https://scholar.google.com/scholar?q=recent+research+electrical+safety+standards&as_sdts=5,48" target="_blank">[Recent Papers]</a>
+                    <a href="https://www.youtube.com/embed/u4RX4SyIzj85" target="_blank">[Videos]</a>
+                </span>
+             </h4>
+             <p class="text-gray-400 text-sm italic mb-4">(These are standards documents, often require purchase for full access, but understanding their scope and key principles is valuable.)</p>
+             <ul>
+                 <li class="fusion-highlight"><div class="item-details">
+                     <span class="standard-code">NFPA 70E</span>: Standard for Electrical Safety in the Workplace</div>
+                     <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=NFPA+70E+Standard+for+Electrical+Safety+in+the+Workplace" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=NFPA+70E+Standard+for+Electrical+Safety+in+the+Workplace" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=NFPA+70E+Standard+for+Electrical+Safety+in+the+Workplace" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=NFPA+70E+Standard+for+Electrical+Safety+in+the+Workplace&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=NFPA+70E+Standard+for+Electrical+Safety+in+the+Workplace" target="_blank">[Sci-Hub]</a>
+                    </span>
+                 </li>
+                  <li class="fusion-highlight"><div class="item-details">
+                      <span class="standard-code">ISO 9001</span>: Quality management systems — Requirements</div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=ISO+9001+Quality+management+systems+Requirements" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=ISO+9001+Quality+management+systems+Requirements" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=ISO+9001+Quality+management+systems+Requirements" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=ISO+9001+Quality+management+systems+Requirements&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=ISO+9001+Quality+management+systems+Requirements" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                  <li class="fusion-highlight"><div class="item-details">
+                      <span class="standard-code">ANSI Y32.2</span> / <span class="standard-code">IEEE 315</span>: Graphic Symbols for Electrical and Electronics Diagrams</div>
+                      <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=ANSI+Y32.2+Graphic+Symbols+for+Electrical+and+Electronics+Diagrams" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=ANSI+Y32.2+Graphic+Symbols+for+Electrical+and+Electronics+Diagrams" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=ANSI+Y32.2+Graphic+Symbols+for+Electrical+and+Electronics+Diagrams" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=ANSI+Y32.2+Graphic+Symbols+for+Electrical+and+Electronics+Diagrams&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=ANSI+Y32.2+Graphic+Symbols+for+Electrical+and+Electronics+Diagrams" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                  <li class="fusion-highlight"><div class="item-details">
+                      <span class="standard-code">ANSI B4.1</span>: Preferred Limits and Fits for Cylindrical Parts</div>
+                       <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=ANSI+B4.1+Preferred+Limits+and+Fits+for+Cylindrical+Parts" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=ANSI+B4.1+Preferred+Limits+and+Fits+for+Cylindrical+Parts" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=ANSI+B4.1+Preferred+Limits+and+Fits+for+Cylindrical+Parts" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=ANSI+B4.1+Preferred+Limits+and+Fits+for+Cylindrical+Parts&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=ANSI+B4.1+Preferred+Limits+and+Fits+for+Cylindrical+Parts" target="_blank">[Sci-Hub]</a>
+                    </span>
+                  </li>
+                   <li class="fusion-highlight"><div class="item-details">
+                        <span class="standard-code">OSHA 1910 Subpart S</span>: Electrical</div>
+                        <span class="resource-links">
+                        <a href="https://scholar.google.com/scholar?q=OSHA+1910+Subpart+S+Electrical" target="_blank">[Scholar]</a>
+                        <a href="https://archive.org/search?query=OSHA+1910+Subpart+S+Electrical" target="_blank">[Archive]</a>
+                        <a href="https://annas-archive.org/search?q=OSHA+1910+Subpart+S+Electrical" target="_blank">[Anna's]</a>
+                        <a href="http://libgen.rs/search.php?req=OSHA+1910+Subpart+S+Electrical&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def" target="_blank">[LibGen]</a>
+                        <a href="https://sci-hub.st/https://scholar.google.com/scholar?q=OSHA+1910+Subpart+S+Electrical" target="_blank">[Sci-Hub]</a>
+                    </span>
+                   </li>
+            </ul>
+
+
+        </div>
+    </section>
+
+
+    <footer class="section-bg-dark text-gray-500 py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a> <a href="https://www.youtube.com/@EdwinHwu" target="_blank">🧪</a> <a href="https://www.youtube.com/watch?v=rJPKTCdk-WI" target="_blank">🔬</a></p>
+             <div class="footer-nav-links">
+                 <a href="index.html">Portfolio Home</a>
+                 <a href="study_plan.html">Study Plan</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
