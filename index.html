@@ -9,11 +9,38 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Deep Navy background */
+            /* Deep Navy background - used as fallback/base */
             background-color: #1a2634;
             color: #e0e6ed; /* Off-White/Light Gray default text */
             line-height: 1.6; /* Improved readability */
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default body padding */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            position: relative; /* Needed for absolute positioning of canvas */
+            min-height: 100vh; /* Ensure body covers at least the viewport height */
+
+            /* Fractal Background Image (Reverted) */
+            /* Replace 'YOUR_FRACTAL_IMAGE_URL.jpg' with the URL of your fractal image */
+            /* Removed resolution placeholder text from the URL */
+            background-image: url('https://placehold.co/1a2634/e0e6ed'); /* Placeholder: solid color background */
+            background-repeat: repeat; /* Repeat the image to cover the background */
+            background-size: auto; /* Adjust as needed, 'cover' or 'contain' might also work depending on the image */
+            background-attachment: fixed; /* Keep the background fixed while scrolling */
         }
+
+        /* Removed Canvas styles */
+        /*
+        #fractalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #1a2634;
+        }
+        */
+
 
         /* Ensure iframes have a background if their content doesn't */
         iframe {
@@ -101,11 +128,15 @@
             color: #9ba3af; /* Medium Gray for footer text */
          }
 
-         /* Section background colors */
+         /* Section background colors - Ensure sections have solid backgrounds to stand out over the fractal */
          .section-bg-dark {
              background-color: #253342; /* Charcoal Blue */
          }
-         /* No specific medium background, using body background for alternating sections */
+         /* Apply a semi-transparent background to sections without section-bg-dark */
+         section:not(.section-bg-dark) {
+             background-color: rgba(26, 38, 52, 0.95); /* Slightly more opaque dark background for readability */
+         }
+
 
         /* --- Styles for Image Overlays on Headers --- */
         .header-with-image {
@@ -211,37 +242,60 @@
             overflow: hidden; /* Hide images outside the view */
             border-radius: 8px; /* Match card rounded corners */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            /* Added min-height to stabilize button position */
+            min-height: 500px; /* Adjust this value based on your image heights */
+            display: flex; /* Use flexbox to center image vertically */
+            align-items: center; /* Center image vertically */
+            justify-content: center; /* Center image horizontally */
+            margin-bottom: 0; /* Remove margin-bottom here, add to controls wrapper */
         }
 
         .mySlides {
             display: none; /* Hide slides by default */
             width: 100%;
-            height: auto;
+            height: 100%; /* Allow slide to take full height of container */
+            text-align: center; /* Center content inside slide */
         }
 
-        /* Next & previous buttons */
+        /* Style for images within slides to fit and maintain aspect ratio */
+        .mySlides img {
+            width: 100%; /* Image takes full width of its container */
+            height: 100%; /* Image takes full height of its container */
+            object-fit: contain; /* Scale the image to fit the container, maintaining aspect ratio */
+            display: block; /* Ensure image behaves as a block element */
+            margin: auto; /* Center the image if it doesn't fill the container */
+        }
+
+
+        /* Next & previous buttons - Adjusted positioning */
         .prev, .next {
             cursor: pointer;
-            position: absolute;
-            top: 50%;
+            /* Removed absolute positioning properties */
+            /* position: absolute; */
+            /* top: 50%; */
             width: auto;
-            padding: 16px;
-            margin-top: -22px;
+            padding: 10px 16px; /* Adjusted padding */
+            /* Removed margin-top */
+            /* margin-top: -22px; */
             color: white;
             font-weight: bold;
             font-size: 18px;
             transition: 0.6s ease;
-            border-radius: 0 3px 3px 0;
+            border-radius: 3px; /* Uniform border radius */
             user-select: none;
             background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
             z-index: 10; /* Ensure buttons are above images */
+            display: inline-block; /* Make buttons inline-block for horizontal layout */
+            margin: 0 5px; /* Add spacing between buttons and dots */
         }
 
-        /* Position the "next button" to the right */
+        /* Removed specific positioning for next button */
+        /*
         .next {
             right: 0;
             border-radius: 3px 0 0 3px;
         }
+        */
 
         /* On hover, add a black background color with a little more opacity */
         .prev:hover, .next:hover {
@@ -312,6 +366,20 @@
             text-decoration: underline;
         }
 
+        /* Style for the button and dot container wrapper */
+        .slideshow-controls {
+            display: flex;
+            justify-content: center; /* Center the content horizontally */
+            align-items: center; /* Align items vertically in the center */
+            margin-top: 10px; /* Add space above the controls */
+            margin-bottom: 20px; /* Add space below the controls */
+        }
+
+        /* Adjust margin for the dot container within the flex wrapper */
+        .slideshow-controls .dot-container {
+            margin: 0 10px; /* Add space between buttons and dots */
+        }
+
 
     </style>
 </head>
@@ -329,8 +397,8 @@
             <div class="nav-links-container">
                 <nav>
                     <ul class="flex space-x-8">
-                        <li><a href="#photos" class="transition duration-300">Photos</a></li>
                         <li><a href="#videos" class="transition duration-300">Videos</a></li>
+                        <li><a href="#photos" class="transition duration-300">Photos</a></li>
                          <li><a href="#projects" class="transition duration-300">Projects</a></li>
                     </ul>
                 </nav>
@@ -347,151 +415,23 @@
         </div>
     </header>
 
-    <section id="photos" class="py-20">
-         <div class="header-with-image mb-16" style="background-image: url('[Your Photos Background Image URL]'); min-height: 150px;"> <div class="header-content">
-                 <h2 class="text-3xl text-center">Photos</h2>
-            </div>
-        </div>
+    <section id="videos" class="py-20">
         <div class="container mx-auto px-4">
-            <p class="text-center text-gray-400 mb-16">A selection of my projects and photography. (Manually updated)</p>
-
-            <div class="slideshow-container" style="max-width: 960px;">
-
-                <div class="mySlides fade">
-                    <div class="numbertext">1 / 19</div>
-                    <img src="https://i.imgur.com/vmRKx77.png" style="width:100%" alt="Slideshow Image 1">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">2 / 19</div>
-                    <img src="https://i.imgur.com/tpkmzqE.png" style="width:100%" alt="Slideshow Image 2">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">3 / 19</div>
-                    <img src="https://i.imgur.com/rLiZBzd.png" style="width:100%" alt="Slideshow Image 3">
-                    </div>
-
-                 <div class="mySlides fade">
-                    <div class="numbertext">4 / 19</div>
-                    <img src="https://i.imgur.com/OEfjNJj.png" style="width:100%" alt="Slideshow Image 4">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">5 / 19</div>
-                    <img src="https://i.imgur.com/DHSEtY2.png" style="width:100%" alt="Slideshow Image 5">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">6 / 19</div>
-                    <img src="https://i.imgur.com/h2NwKL5.png" style="width:100%" alt="Slideshow Image 6">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">7 / 19</div>
-                    <img src="https://i.imgur.com/RF2ST8q.png" style="width:100%" alt="Slideshow Image 7">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">8 / 19</div>
-                    <img src="https://i.imgur.com/L2xKwk7.png" style="width:100%" alt="Slideshow Image 8">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">9 / 19</div>
-                    <img src="https://i.imgur.com/7FKksjN.png" style="width:100%" alt="Slideshow Image 9">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">10 / 19</div>
-                    <img src="https://i.imgur.com/J6pvi0s.png" style="width:100%" alt="Slideshow Image 10">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">11 / 19</div>
-                    <img src="https://i.imgur.com/lge9pDg.png" style="width:100%" alt="Slideshow Image 11">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">12 / 19</div>
-                    <img src="https://i.imgur.com/37p1ZUR.png" style="width:100%" alt="Slideshow Image 12">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">13 / 19</div>
-                    <img src="https://i.imgur.com/92y8IJK.png" style="width:100%" alt="Slideshow Image 13">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">14 / 19</div>
-                    <img src="https://i.imgur.com/oqlDoZL.png" style="width:100%" alt="Slideshow Image 14">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">15 / 19</div>
-                    <img src="https://i.imgur.com/Ndd1sZm.png" style="width:100%" alt="Slideshow Image 15">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">16 / 19</div>
-                    <img src="https://i.imgur.com/JqO1p72.png" style="width:100%" alt="Slideshow Image 16">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">17 / 19</div>
-                    <img src="https://i.imgur.com/i9wJvz2.png" style="width:100%" alt="Slideshow Image 17">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">18 / 19</div>
-                    <img src="https://i.imgur.com/pzTXFOz.jpeg" style="width:100%" alt="Slideshow Image 18">
-                    </div>
-
-                <div class="mySlides fade">
-                    <div class="numbertext">19 / 19</div>
-                    <img src="https://i.imgur.com/fFNy7oL.png" style="width:100%" alt="Slideshow Image 19">
-                </div>
-
-
-                <a class="prev" onclick="plusSlides(-1)">❮</a>
-                <a class="next" onclick="plusSlides(1)">❯</a>
-
-            </div>
-            <br>
-
-            <div style="text-align:center">
-                <span class="dot" onclick="currentSlide(1)"></span>
-                <span class="dot" onclick="currentSlide(2)"></span>
-                <span class="dot" onclick="currentSlide(3)"></span>
-                <span class="dot" onclick="currentSlide(4)"></span>
-                <span class="dot" onclick="currentSlide(5)"></span>
-                <span class="dot" onclick="currentSlide(6)"></span>
-                <span class="dot" onclick="currentSlide(7)"></span>
-                <span class="dot" onclick="currentSlide(8)"></span>
-                <span class="dot" onclick="currentSlide(9)"></span>
-                <span class="dot" onclick="currentSlide(10)"></span>
-                <span class="dot" onclick="currentSlide(11)"></span>
-                <span class="dot" onclick="currentSlide(12)"></span>
-                <span class="dot" onclick="currentSlide(13)"></span>
-                <span class="dot" onclick="currentSlide(14)"></span>
-                <span class="dot" onclick="currentSlide(15)"></span>
-                <span class="dot" onclick="currentSlide(16)"></span>
-                <span class="dot" onclick="currentSlide(17)"></span>
-                <span class="dot" onclick="currentSlide(18)"></span>
-                <span class="dot" onclick="currentSlide(19)"></span>
-            </div>
-
-            </div>
-    </section>
-
-    <section id="videos" class="section-bg-dark py-20">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl text-center mb-16">Hyperstereo Timelapse Videos</h2>
+            <h2 class="text-3xl text-center mb-16">Timelapse Videos</h2>
             <p class="text-center text-gray-400 mb-12">Check out my latest videos. (Manually updated)</p>
+            <p class="text-center text-gray-400 mb-12">Videos were captured using a custom-built stereo rig featuring a pair of full spectrum modified Nikon D3400 cameras equipped with 18mm f/3.6 kit lenses. The rig's operation, including triggering, editing, and storage, was managed via a Steam Deck leveraging `entangle` and `libgphoto2`.</p>
             <div class="grid grid-cols-1 gap-8">
                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800">
                     <div class="relative" style="padding-top: 56.25%;">
-                        <iframe src="https://www.youtube.com/embed/1JbvGFYwPvQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/staaWwRnT8I?si=_zxJ-HvwV9dQHaz3?vq=hd1440?vq=hd1440" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-6 bg-gray-900">
+                        <h3 class="text-xl font-semibold text-white">20241010 - Glorious October Aurora Over the Sound - 4K - Mono</h3>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800">
+                    <div class="relative" style="padding-top: 56.25%;">
+                         <iframe src="https://www.youtube.com/embed/1JbvGFYwPvQ?vq=hd1440" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                     <div class="p-6 bg-gray-900">
                         <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - C/2023 A3 (Tsuchinshan–ATLAS)</h3>
@@ -499,7 +439,7 @@
                 </div>
                 <div class="rounded-lg shadow-xl overflow-hidden bg-gray-800">
                     <div class="relative" style="padding-top: 56.25%;">
-                         <iframe src="https://www.youtube.com/embed/u4RX4SyIzj8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                         <iframe src="https://www.youtube.com/embed/u4RX4SyIzj8?vq=hd1440" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                     <div class="p-6 bg-gray-900">
                         <h3 class="text-xl font-semibold text-white">Hyperstereo Timelapse - Glorious Aurora - PNW 2024.10.10</h3>
@@ -509,7 +449,168 @@
         </div>
     </section>
 
-     <section id="projects" class="py-20"> <div class="container mx-auto px-4">
+    <section id="photos" class="section-bg-dark py-20">
+         <div class="header-with-image mb-16" style="background-image: url('[Your Photos Background Image URL]'); min-height: 150px;"> <div class="header-content">
+                 <h2 class="text-3xl text-center">Photos</h2>
+            </div>
+        </div>
+        <div class="container mx-auto px-4">
+            <p class="text-center text-gray-400 mb-16">A selection of my projects and photography. (Manually updated)</p>
+
+            <div class="slideshow-container" id="slideshow1" style="max-width: 960px;">
+
+                <div class="mySlides fade">
+                    <div class="numbertext">1 / 14</div>
+                    <img src="https://i.imgur.com/vmRKx77.png" alt="Slideshow Image 1">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">2 / 14</div>
+                    <img src="https://i.imgur.com/tpkmzqE.png" alt="Slideshow Image 2">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">3 / 14</div>
+                    <img src="https://i.imgur.com/rLiZBzd.png" alt="Slideshow Image 3">
+                    </div>
+
+                 <div class="mySlides fade">
+                    <div class="numbertext">4 / 14</div>
+                    <img src="https://i.imgur.com/OEfjNJj.png" alt="Slideshow Image 4">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">5 / 14</div>
+                    <img src="https://i.imgur.com/DHSEtY2.png" alt="Slideshow Image 5">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">6 / 14</div>
+                    <img src="https://i.imgur.com/h2NwKL5.png" alt="Slideshow Image 6">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">7 / 14</div>
+                    <img src="https://i.imgur.com/RF2ST8q.png" alt="Slideshow Image 7">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">8 / 14</div>
+                    <img src="https://i.imgur.com/L2xKwk7.png" alt="Slideshow Image 8">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">9 / 14</div>
+                    <img src="https://i.imgur.com/7FKksjN.png" alt="Slideshow Image 9">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">10 / 14</div>
+                    <img src="https://i.imgur.com/J6pvi0s.png" alt="Slideshow Image 10">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">11 / 14</div>
+                    <img src="https://i.imgur.com/JqO1p72.png" alt="Slideshow Image 11">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">12 / 14</div>
+                    <img src="https://i.imgur.com/i9wJvz2.png" alt="Slideshow Image 12">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">13 / 14</div>
+                    <img src="https://i.imgur.com/pzTXFOz.jpeg" alt="Slideshow Image 13">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">14 / 14</div>
+                    <img src="https://i.imgur.com/fFNy7oL.png" alt="Slideshow Image 14">
+                </div>
+
+            </div>
+            <br>
+
+             <div class="slideshow-controls" id="slideshow1-controls">
+                <a class="prev" onclick="plusSlides(1, -1)">❮</a>
+                <div class="dot-container">
+                    <span class="dot" onclick="currentSlide(1, 1)"></span>
+                    <span class="dot" onclick="currentSlide(1, 2)"></span>
+                    <span class="dot" onclick="currentSlide(1, 3)"></span>
+                    <span class="dot" onclick="currentSlide(1, 4)"></span>
+                    <span class="dot" onclick="currentSlide(1, 5)"></span>
+                    <span class="dot" onclick="currentSlide(1, 6)"></span>
+                    <span class="dot" onclick="currentSlide(1, 7)"></span>
+                    <span class="dot" onclick="currentSlide(1, 8)"></span>
+                    <span class="dot" onclick="currentSlide(1, 9)"></span>
+                    <span class="dot" onclick="currentSlide(1, 10)"></span>
+                    <span class="dot" onclick="currentSlide(1, 11)"></span>
+                    <span class="dot" onclick="currentSlide(1, 12)"></span>
+                    <span class="dot" onclick="currentSlide(1, 13)"></span>
+                    <span class="dot" onclick="currentSlide(1, 14)"></span>
+                </div>
+                <a class="next" onclick="plusSlides(1, 1)">❯</a>
+            </div>
+
+            </div>
+    </section>
+
+    <section id="more-photos" class="py-20">
+         <div class="header-with-image mb-16" style="background-image: url('[Your More Photos Background Image URL]'); min-height: 150px;"> <div class="header-content">
+                 <h2 class="text-3xl text-center">More Photos</h2>
+            </div>
+        </div>
+        <div class="container mx-auto px-4">
+            <p class="text-center text-gray-400 mb-16">Additional photography. (Manually updated)</p>
+
+            <div class="slideshow-container" id="slideshow2" style="max-width: 960px;">
+
+                <div class="mySlides fade">
+                    <div class="numbertext">1 / 5</div>
+                    <img src="https://i.imgur.com/lge9pDg.png" alt="Slideshow Image 11">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">2 / 5</div>
+                    <img src="https://i.imgur.com/37p1ZUR.png" alt="Slideshow Image 12">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">3 / 5</div>
+                    <img src="https://i.imgur.com/92y8IJK.png" alt="Slideshow Image 13">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">4 / 5</div>
+                    <img src="https://i.imgur.com/oqlDoZL.png" alt="Slideshow Image 14">
+                    </div>
+
+                <div class="mySlides fade">
+                    <div class="numbertext">5 / 5</div>
+                    <img src="https://i.imgur.com/Ndd1sZm.png" alt="Slideshow Image 15">
+                    </div>
+
+            </div>
+            <br>
+
+             <div class="slideshow-controls" id="slideshow2-controls">
+                <a class="prev" onclick="plusSlides(2, -1)">❮</a>
+                <div class="dot-container">
+                    <span class="dot" onclick="currentSlide(2, 1)"></span>
+                    <span class="dot" onclick="currentSlide(2, 2)"></span>
+                    <span class="dot" onclick="currentSlide(2, 3)"></span>
+                    <span class="dot" onclick="currentSlide(2, 4)"></span>
+                    <span class="dot" onclick="currentSlide(2, 5)"></span>
+                </div>
+                <a class="next" onclick="plusSlides(2, 1)">❯</a>
+            </div>
+
+            </div>
+    </section>
+
+
+    <section id="projects" class="section-bg-dark py-20"> <div class="container mx-auto px-4">
             <h2 class="text-3xl text-center mb-16">Projects (Work in Progress)</h2> <p class="text-center text-gray-400 mb-16">While this section is under development, you can explore this related project by Jerry Biehler:</p> <div class="flex justify-center mb-12"> <a href="https://hackaday.io/project/3281-hitachi-s-450-scanning-electron-microscope" target="_blank" class="block rounded-lg shadow-xl overflow-hidden max-w-lg bg-gray-800"> <img src="https://cdn.hackaday.io/images/6833051414698947663.jpg" alt="Hitachi S-450 Scanning Electron Microscope Project on Hackaday.io" class="w-full h-auto object-cover project-link-image">
                      <div class="p-6 text-center text-gray-300"> <p>Hitachi S-450 Scanning Electron Microscope Project</p>
                      </div>
@@ -567,35 +668,78 @@
         // dynamically creating/managing iframe embeds within the overlay.
         // The current implementation is for images only.
 
-        // --- Slideshow Script ---
-        let slideIndex = 1;
-        showSlides(slideIndex);
+        // --- Slideshow Scripts ---
+        let slideIndex1 = 1; // Index for the first slideshow
+        let slideIndex2 = 1; // Index for the second slideshow
+        let lastInteractedSlideshowId = 'slideshow1'; // Track the last interacted slideshow
 
-        // Next/previous controls
-        function plusSlides(n) {
-          showSlides(slideIndex += n);
-        }
-
-        // Thumbnail image controls
-        function currentSlide(n) {
-          showSlides(slideIndex = n);
-        }
-
-        function showSlides(n) {
+        // Function to show slides for a specific slideshow
+        function showSlides(slideshowNum, n) {
           let i;
-          let slides = document.getElementsByClassName("mySlides");
-          let dots = document.getElementsByClassName("dot");
-          if (n > slides.length) {slideIndex = 1}
-          if (n < 1) {slideIndex = slides.length}
+          let slides, dots;
+
+          if (slideshowNum === 1) {
+            slides = document.querySelectorAll("#slideshow1 .mySlides");
+            // Correctly select dots by targeting the controls div
+            dots = document.querySelectorAll("#slideshow1-controls .dot");
+             if (n > slides.length) {slideIndex1 = 1}
+             if (n < 1) {slideIndex1 = slides.length}
+          } else if (slideshowNum === 2) {
+            slides = document.querySelectorAll("#slideshow2 .mySlides");
+            // Correctly select dots by targeting the controls div
+            dots = document.querySelectorAll("#slideshow2-controls .dot");
+             if (n > slides.length) {slideIndex2 = 1}
+             if (n < 1) {slideIndex2 = slides.length}
+          }
+
+          // Hide all slides
           for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
           }
+          // Remove 'active' class from all dots
           for (i = 0; i < dots.length; i++) {
             dots[i].className = dots[i].className.replace(" active", "");
           }
-          slides[slideIndex-1].style.display = "block";
-          dots[slideIndex-1].className += " active";
+
+          // Display the current slide and mark the active dot
+          if (slideshowNum === 1) {
+              slides[slideIndex1-1].style.display = "block";
+              dots[slideIndex1-1].className += " active";
+          } else if (slideshowNum === 2) {
+              slides[slideIndex2-1].style.display = "block";
+              dots[slideIndex2-1].className += " active";
+          }
         }
+
+        // Next/previous controls
+        function plusSlides(slideshowNum, n) {
+          if (slideshowNum === 1) {
+            showSlides(slideshowNum, slideIndex1 += n);
+            lastInteractedSlideshowId = 'slideshow1'; // Update last interacted
+          } else if (slideshowNum === 2) {
+            showSlides(slideshowNum, slideIndex2 += n);
+            lastInteractedSlideshowId = 'slideshow2'; // Update last interacted
+          }
+        }
+
+        // Thumbnail image controls
+        function currentSlide(slideshowNum, n) {
+           if (slideshowNum === 1) {
+            showSlides(slideshowNum, slideIndex1 = n);
+            lastInteractedSlideshowId = 'slideshow1'; // Update last interacted
+          } else if (slideshowNum === 2) {
+            showSlides(slideshowNum, slideIndex2 = n);
+            lastInteractedSlideshowId = 'slideshow2'; // Update last interacted
+          }
+        }
+
+        // Initial display of slides on page load
+        window.onload = function() {
+            showSlides(1, slideIndex1); // Show the first slide of the first slideshow
+            showSlides(2, slideIndex2); // Show the first slide of the second slideshow
+            // Removed fractal drawing call: drawFractal();
+        };
+
 
         // Optional: Auto-advance the slideshow (uncomment the function and the interval call)
         /*
@@ -619,15 +763,144 @@
         // autoShowSlides();
         */
 
-        // Add keyboard navigation for slideshow
+        // Add keyboard navigation for slideshow (controls the last interacted slideshow)
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowLeft') {
-                plusSlides(-1); // Go to previous slide
-            } else if (event.key === 'ArrowRight') {
-                plusSlides(1); // Go to next slide
+            // console.log('Key pressed:', event.key, 'Last interacted slideshow:', lastInteractedSlideshowId); // Log key press and last interacted slideshow
+
+            if (lastInteractedSlideshowId === 'slideshow1') {
+                if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
+                    event.preventDefault(); // Prevent default browser action
+                    event.stopPropagation(); // Stop event from propagating
+                    plusSlides(1, -1); // Go to previous slide in slideshow 1
+                } else if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') {
+                    event.preventDefault(); // Prevent default browser action
+                    event.stopPropagation(); // Stop event from propagating
+                    plusSlides(1, 1); // Go to next slide in slideshow 1
+                }
+            } else if (lastInteractedSlideshowId === 'slideshow2') {
+                 if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
+                    event.preventDefault(); // Prevent default browser action
+                    event.stopPropagation(); // Stop event from propagating
+                    plusSlides(2, -1); // Go to previous slide in slideshow 2
+                } else if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') {
+                    event.preventDefault(); // Prevent default browser action
+                    event.stopPropagation(); // Stop event from propagating
+                    plusSlides(2, 1); // Go to next slide in slideshow 2
+                }
             }
         });
 
+        // Removed Fractal Generation Script
+        /*
+        const canvas = document.getElementById('fractalCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawFractal() {
+            console.log('drawFractal called');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            console.log('Canvas dimensions:', width, height);
+
+            canvas.width = width;
+            canvas.height = height;
+
+            if (!ctx) {
+                console.error('Could not get canvas context');
+                return;
+            }
+             console.log('Canvas context obtained');
+
+
+            const baseIterations = 100;
+            const scalingFactor = 0.2;
+            const maxIterations = baseIterations + Math.floor(scalingFactor * Math.max(width, height));
+            console.log('Max iterations:', maxIterations);
+
+
+            const realMin = -2.0;
+            const realMax = 1.0;
+            const imagMin = -1.5;
+            const imagMax = 1.5;
+
+            const realRange = realMax - realMin;
+            const imagRange = imagMax - imagMin;
+
+            let adjustedRealMin = realMin;
+            let adjustedRealMax = realMax;
+            let adjustedImagMin = imagMin;
+            let adjustedImagMax = imagMax;
+
+            const fractalAspectRatio = imagRange / realRange;
+            const screenAspectRatio = width / height;
+
+            if (screenAspectRatio > fractalAspectRatio) {
+                const currentImagCenter = (imagMin + imagMax) / 2;
+                const newImagRange = realRange * screenAspectRatio;
+                adjustedImagMin = currentImagCenter - newImagRange / 2;
+                adjustedImagMax = currentImagCenter + newImagRange / 2;
+            } else {
+                const currentRealCenter = (realMin + realMax) / 2;
+                const newRealRange = imagRange / screenAspectRatio;
+                adjustedRealMin = currentRealCenter - newRealRange / 2;
+                adjustedRealMax = currentRealCenter + newRealRange / 2;
+            }
+
+            console.log('Adjusted Real Range:', adjustedRealMin, adjustedRealMax);
+            console.log('Adjusted Imaginary Range:', adjustedImagMin, adjustedImagMax);
+
+
+            const realScale = (adjustedRealMax - adjustedRealMin) / height;
+            const imagScale = (adjustedImagMax - adjustedImagMin) / width;
+
+            console.log('Real Scale:', realScale, 'Imaginary Scale:', imagScale);
+
+
+            const imageData = ctx.createImageData(width, height);
+            const pixels = imageData.data;
+
+            console.log('Starting pixel iteration...');
+
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    const cReal = adjustedRealMin + y * realScale;
+                    const cImag = adjustedImagMin + x * imagScale;
+
+                    let zReal = 0;
+                    let zImag = 0;
+                    let iterations = 0;
+
+                    while (zReal * zReal + zImag * zImag <= 4 && iterations < maxIterations) {
+                        const nextZReal = zReal * zReal - zImag * zImag + cReal;
+                        const nextZImag = 2 * zReal * zImag + cImag;
+                        zReal = nextZReal;
+                        zImag = nextZImag;
+                        iterations++;
+                    }
+
+                    const pixelIndex = (y * width + x) * 4;
+
+                    if (iterations === maxIterations) {
+                        pixels[pixelIndex] = 0;
+                        pixels[pixelIndex + 1] = 0;
+                        pixels[pixelIndex + 2] = 0;
+                        pixels[pixelIndex + 3] = 255;
+                    } else {
+                        const color = (iterations / maxIterations) * 255;
+                        pixels[pixelIndex] = color;
+                        pixels[pixelIndex + 1] = color;
+                        pixels[pixelIndex + 2] = color;
+                        pixels[pixelIndex + 3] = 255;
+                    }
+                }
+            }
+
+            console.log('Pixel iteration finished. Putting image data...');
+            ctx.putImageData(imageData, 0, 0);
+            console.log('Fractal drawn.');
+        }
+
+        window.addEventListener('resize', drawFractal);
+        */
     </script>
 
 </body>
