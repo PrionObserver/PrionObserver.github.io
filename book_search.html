@@ -92,8 +92,8 @@
             background-color: #89d0f8; /* Lighter blue on hover */
         }
 
-        /* Style for the language select dropdown */
-        #language-select {
+        /* Style for the filter dropdowns */
+        .filter-select {
             background-color: #2d3a4b; /* Match textarea background */
             color: #e0e6ed; /* Match text color */
             border: 1px solid #4a5568; /* Match textarea border */
@@ -104,7 +104,7 @@
             transition: border-color 0.3s ease;
         }
 
-        #language-select:focus {
+        .filter-select:focus {
             outline: none;
             border-color: #5ac8fa; /* Highlight on focus */
         }
@@ -439,9 +439,9 @@ Annihilation (Southern Reach #1)
 The Martian Chronicles
 </textarea>
 
-            <div class="flex justify-center items-center mt-6">
-                <button id="generate-links-button" class="mr-4">Generate Links</button>
-                <select id="language-select" class="bg-gray-700 text-gray-200 border border-gray-600 rounded px-3 py-2 text-sm">
+            <div class="flex flex-wrap justify-center items-center mt-6 gap-4">
+                <button id="generate-links-button">Generate Links</button>
+                <select id="language-select" class="filter-select">
                     <option value="en">English</option>
                     <option value="es">Español</option>
                     <option value="fr">Français</option>
@@ -451,6 +451,33 @@ The Martian Chronicles
                     <option value="ja">日本語</option>
                     <option value="pt">Português</option>
                     <option value="">Any Language</option>
+                </select>
+                 <select id="filetype-select" class="filter-select">
+                    <option value="">Any File Type</option>
+                    <option value="pdf">PDF</option>
+                    <option value="epub">EPUB</option>
+                    <option value="mobi">MOBI</option>
+                    <option value="djvu">DJVU</option>
+                    <option value="fb2">FB2</option>
+                    <option value="txt">TXT</option>
+                    <option value="html">HTML</option>
+                    <option value="rtf">RTF</option>
+                    <option value="azw3">AZW3</option>
+                    <option value="cbr">CBR</option>
+                    <option value="cbz">CBZ</option>
+                    <option value="doc">DOC</option>
+                    <option value="docx">DOCX</option>
+                    <option value="ppt">PPT</option>
+                    <option value="pptx">PPTX</option>
+                    <option value="odt">ODT</option>
+                    <option value="rtf">RTF</option>
+                </select>
+                 <select id="order-select" class="filter-select">
+                    <option value="">Default Order</option>
+                    <option value="relevance">Relevance</option>
+                    <option value="date">Date</option>
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
                 </select>
             </div>
 
@@ -484,6 +511,9 @@ The Martian Chronicles
             const copyButtonsArea = document.getElementById('copy-buttons-area'); // New container for text and buttons
             const copyButtonsContainer = document.getElementById('copy-buttons-container'); // Container for buttons only
             const languageSelect = document.getElementById('language-select'); // Get the language select dropdown
+            const filetypeSelect = document.getElementById('filetype-select'); // Get the file type select dropdown
+            const orderSelect = document.getElementById('order-select'); // Get the order select dropdown
+
 
             // Define the search URLs for ALL sites
             const searchUrls = {
@@ -518,39 +548,100 @@ The Martian Chronicles
                  'LibriVox'
              ];
 
-             // Define URL suffixes for specific searches (including language parameters)
+             // Define URL modifiers for specific searches (including language, file type, order parameters)
+             // Each function takes encodedTitle, langCode, fileType, and order as arguments
              const urlModifiers = {
-                 'Audio': (encodedTitle, langCode) => {
-                     return `&and%5B%5D=mediatype%3A%22audio%22`; // Suffix for Archive.org Audio search
+                 'Audio': (encodedTitle, langCode, fileType, order) => {
+                     let params = `&and%5B%5D=mediatype%3A%22audio%22`; // Suffix for Archive.org Audio search
+                     // Archive.org supports sorting
+                     if (order === 'date') params += `&sort=date`;
+                     else if (order === 'title') params += `&sort=title`;
+                     // File type filtering on Archive.org is complex and not a simple URL param for 'search'
+                     return params;
                  },
-                 'eBay': (encodedTitle, langCode) => {
-                     return `&_sop=15`; // Suffix for eBay lowest price sort
+                 'eBay': (encodedTitle, langCode, fileType, order) => {
+                     let params = `&_sop=15`; // Suffix for eBay lowest price sort
+                     // eBay doesn't have standard file type or language filters via search URL
+                     // Order can be changed, but _sop=15 is for lowest price, other orders are different params
+                     return params;
                  },
-                 'Scholar': (encodedTitle, langCode) => {
-                     return langCode ? `&hl=${langCode}` : ''; // Google Scholar uses hl
+                 'Amazon': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                      // Amazon doesn't have standard file type or language filters via search URL
+                      // Order can be changed with 's=' parameter, but relevance is default
+                      return params;
                  },
-                 "Anna's": (encodedTitle, langCode) => {
-                     return langCode ? `&lang=${langCode}` : ''; // Anna's Archive uses lang
+                 'Audible': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                       // Audible is audiobooks, no file type filter needed. Language/Order not standard URL params.
+                      return params;
                  },
-                 'LibGen': (encodedTitle, langCode) => { // LibGen uses full language name
+                 'LibriVox': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                       // LibriVox is audiobooks, no file type filter needed. Language/Order not standard URL params.
+                      return params;
+                 },
+                 'Scholar': (encodedTitle, langCode, fileType, order) => {
+                     let params = '';
+                     if (langCode) params += `&hl=${langCode}`; // Google Scholar uses hl for language
+                     if (fileType) params += `&as_filetype=${fileType}`; // Google Scholar uses as_filetype
+                     // Google Scholar sorting by date is complex (as_ylo, as_yhi), not simple 'date' or 'relevance'
+                     return params;
+                 },
+                 "Anna's": (encodedTitle, langCode, fileType, order) => {
+                     let params = '';
+                     if (langCode) params += `&lang=${langCode}`; // Anna's Archive uses lang
+                     if (fileType) params += `&ext=${fileType}`; // Anna's Archive uses ext
+                     if (order === 'date') params += `&sort=newest`; // Anna's Archive uses newest/oldest
+                     else if (order === 'relevance') params += `&sort=most+popular`; // Anna's Archive uses most popular for relevance
+                      // Anna's Archive doesn't have simple title/author sort via URL
+                     return params;
+                 },
+                 'LibGen': (encodedTitle, langCode, fileType, order) => { // LibGen uses full language name
+                     let params = '';
                      const langMap = {
                          'en': 'English', 'es': 'Spanish', 'fr': 'French', 'de': 'German',
                          'zh': 'Chinese', 'ru': 'Russian', 'ja': 'Japanese', 'pt': 'Portuguese'
                      };
-                     return langCode && langMap[langCode] ? `&language=${langMap[langCode]}` : '';
+                     if (langCode && langMap[langCode]) params += `&language=${langMap[langCode]}`; // LibGen uses language
+                     if (fileType) params += `&extension=${fileType}`; // LibGen uses extension
+                     if (order === 'date') params += `&column=year`; // LibGen can sort by year
+                     else if (order === 'title') params += `&column=title`; // LibGen can sort by title
+                     else if (order === 'author') params += `&column=author`; // LibGen can sort by author
+                     // Relevance is default on LibGen
+                     return params;
                  },
-                 'Open Library': (encodedTitle, langCode) => { // Open Library uses language code, but often 'eng' for English
+                 'Project Gutenberg': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                       // Project Gutenberg search is basic, no language, file type, or order filters via URL
+                      return params;
+                 },
+                 'Open Library': (encodedTitle, langCode, fileType, order) => { // Open Library uses language code, but often 'eng' for English
+                      let params = '';
                      const olLangMap = {
                           'en': 'eng', 'es': 'spa', 'fr': 'fre', 'de': 'ger',
                           'zh': 'chi', 'ru': 'rus', 'ja': 'jpn', 'pt': 'por'
                      };
-                      return langCode && olLangMap[langCode] ? `&language=${olLangMap[langCode]}` : '';
+                      if (langCode && olLangMap[langCode]) params += `&language=${olLangMap[langCode]}`; // Open Library uses language
+                      // Open Library doesn't have standard file type or order filters via URL
+                      return params;
                  },
-                 'ManyBooks': (encodedTitle, langCode) => {
-                      return langCode ? `&language=${langCode}` : ''; // ManyBooks uses language code
+                 'ManyBooks': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                      if (langCode) params += `&language=${langCode}`; // ManyBooks uses language code
+                       // ManyBooks doesn't have standard file type or order filters via URL
+                      return params;
                  },
-                 'Google Books': (encodedTitle, langCode) => {
-                      return langCode ? `&hl=${langCode}&lr=lang_${langCode}` : ''; // Google Books uses hl and lr
+                 'BookBub': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                      // BookBub search is basic, no language, file type, or order filters via URL
+                      return params;
+                 },
+                 'Google Books': (encodedTitle, langCode, fileType, order) => {
+                      let params = '';
+                      if (langCode) params += `&hl=${langCode}&lr=lang_${langCode}`; // Google Books uses hl and lr
+                       // Google Books doesn't have standard file type or order filters via search URL
+                      return params;
                  }
              };
 
@@ -558,6 +649,8 @@ The Martian Chronicles
             generateButton.addEventListener('click', () => {
                 const lines = textarea.value.split('\n').map(line => line.trim()); // Get all lines, trim whitespace
                 const selectedLanguage = languageSelect.value; // Get the selected language code
+                const selectedFileType = filetypeSelect.value; // Get the selected file type
+                const selectedOrder = orderSelect.value; // Get the selected order
 
                 resultsDiv.innerHTML = ''; // Clear previous results
                 copyButtonsContainer.innerHTML = ''; // Clear previous copy buttons
@@ -609,9 +702,10 @@ The Martian Chronicles
                             const baseUrl = searchUrls[siteName];
                             if (baseUrl) { // Ensure the site name exists in searchUrls
                                 const link = document.createElement('a');
-                                // Construct the full URL using the base, encoded title, and language parameter if applicable
-                                const languageParam = urlModifiers[siteName] ? urlModifiers[siteName](encodedTitle, selectedLanguage) : '';
-                                const fullUrl = baseUrl + encodedTitle + languageParam;
+                                // Construct the full URL using the base, encoded title, and modifiers
+                                const modifierFn = urlModifiers[siteName];
+                                const urlParams = modifierFn ? modifierFn(encodedTitle, selectedLanguage, selectedFileType, selectedOrder) : '';
+                                const fullUrl = baseUrl + encodedTitle + urlParams;
 
                                 link.href = fullUrl;
                                 link.textContent = `[${siteName}]`; // Text inside the button
@@ -643,15 +737,20 @@ The Martian Chronicles
                          const siteToCopy = copyButton.dataset.site;
                          const urlsToCopy = [];
                          const bookItems = resultsDiv.querySelectorAll('.book-result-item');
-                         const currentLanguage = languageSelect.value; // Get the current language for copying
+                         // Get the current filter values for copying
+                         const currentLanguage = languageSelect.value;
+                         const currentFileType = filetypeSelect.value;
+                         const currentOrder = orderSelect.value;
+
 
                          bookItems.forEach(item => {
                              const encodedTitleForCopy = encodeURIComponent(item.querySelector('.book-title').textContent.trim());
                              const baseUrl = searchUrls[siteToCopy];
                              if (baseUrl) {
-                                  // Construct the full URL for copying, including language parameter if applicable
-                                 const languageParam = urlModifiers[siteToCopy] ? urlModifiers[siteToCopy](encodedTitleForCopy, currentLanguage) : '';
-                                 const fullUrl = baseUrl + encodedTitleForCopy + languageParam;
+                                  // Construct the full URL for copying, including all current filter parameters
+                                 const modifierFn = urlModifiers[siteToCopy];
+                                 const urlParams = modifierFn ? modifierFn(encodedTitleForCopy, currentLanguage, currentFileType, currentOrder) : '';
+                                 const fullUrl = baseUrl + encodedTitleForCopy + urlParams;
                                  urlsToCopy.push(fullUrl);
                              }
                          });
