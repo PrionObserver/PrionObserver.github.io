@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Deep Navy background - used as fallback/base */
+            /* Deep Navy background */
             background-color: #1a2634;
             color: #e0e6ed; /* Off-White/Light Gray default text */
             line-height: 1.6; /* Improved readability */
@@ -18,30 +18,78 @@
             overflow-x: hidden; /* Prevent horizontal scrolling */
             position: relative; /* Needed for absolute positioning of canvas */
             min-height: 100vh; /* Ensure body covers at least the viewport height */
+        }
 
-            /* Fractal Background Image (Reverted) */
-            /* Replace 'YOUR_FRACTAL_IMAGE_URL.jpg' with the URL of your fractal image */
-            background-image: url('https://placehold.co/1a2634/e0e6ed'); /* Placeholder: solid color background */
-            background-repeat: repeat; /* Repeat the image to cover the background */
-            background-size: auto; /* Adjust as needed, 'cover' or 'contain' might also work depending on the image */
-            background-attachment: fixed; /* Keep the background fixed while scrolling */
+        /* Ensure iframes have a background if their content doesn't */
+        iframe {
+            background-color: #000;
+        }
+
+        /* Style for images - ensures they don't overflow and are clickable */
+        .photo-container img {
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        /* Styles for the enlarged image overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Hide the overlay by default */
+        .overlay.hidden {
+            display: none;
+        }
+
+        /* Style for the clickable project image */
+        .project-link-image {
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .project-link-image:hover {
+            opacity: 0.9;
+        }
+
+        /* Custom style to make the links list horizontal */
+        .header-links li {
+            display: inline-block;
+            margin-left: 1.5rem;
         }
 
         /* Adjust text color for specific elements */
         h1, h2 {
-            color: #ffffff; /* White color for headings */
-            font-weight: 700; /* Ensure headings are bold */
+            color: #ffffff;
+            font-weight: 700;
         }
 
         /* Link colors */
         a {
             color: #5ac8fa; /* Bright Sky Blue */
-            text-decoration: none; /* Remove default underline */
-            transition: color 0.3s ease; /* Smooth color transition */
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
         a:hover {
             color: #89d0f8; /* Lighter blue on hover */
-            text-decoration: underline; /* Add underline on hover */
+            text-decoration: underline;
         }
 
          /* Footer text color */
@@ -72,13 +120,35 @@
              margin-bottom: 20px;
          }
 
+         /* Container for the text area and guide */
+         #input-guide-container {
+             display: flex;
+             flex-direction: column; /* Stack on small screens */
+             gap: 20px; /* Space between items */
+             margin-bottom: 30px;
+         }
+
+         /* Responsive layout for input and guide */
+         @media (min-width: 768px) { /* Apply on medium screens and up */
+             #input-guide-container {
+                 flex-direction: row; /* Side-by-side on medium+ screens */
+             }
+             #resource-titles-textarea {
+                 flex: 1; /* Allow textarea to grow and take available space */
+             }
+             #resource-guide {
+                 flex: 1; /* Allow guide to grow and take available space */
+             }
+         }
+
+
          #resource-guide {
              background-color: #2d3a4b;
              padding: 15px;
              border-radius: 8px;
-             margin-bottom: 30px;
              color: #e0e6ed;
              font-size: 0.9em;
+             /* Removed margin-bottom as gap handles spacing */
          }
 
          #resource-guide h3 {
@@ -99,18 +169,17 @@
 
 
         #resource-titles-textarea {
-            background-color: #2d3a4b; /* Darker input background */
+            background-color: #3a475b; /* Slightly lighter input background */
             color: #e0e6ed;
             border: 1px solid #4a5568; /* Subtle border */
             border-radius: 6px;
             padding: 10px;
-            width: 100%; /* Make it full width */
+            width: 100%; /* Make it full width on small screens */
             min-height: 400px; /* Increased height for massive list */
             resize: vertical; /* Allow vertical resizing */
         }
 
         /* Button and Filter Grouping Styles */
-        /* Adjusted spacing and flex behavior for better layout */
         .control-group {
             display: flex;
             flex-wrap: wrap; /* Allow wrapping on smaller screens */
@@ -124,9 +193,18 @@
             border: 1px solid rgba(74, 85, 104, 0.3); /* Subtle border for groups */
         }
 
-         /* Specific adjustments for filter group on small screens */
-         .filter-group {
-             justify-content: flex-start; /* Align filters to the start on small screens */
+         /* Condensed Filter Group */
+         #filter-controls {
+             display: flex;
+             flex-wrap: wrap;
+             justify-content: center; /* Center filters */
+             align-items: center;
+             gap: 12px; /* Reduced gap for condensation */
+             margin-bottom: 24px;
+             padding: 12px;
+             background-color: rgba(45, 58, 75, 0.5);
+             border-radius: 8px;
+             border: 1px solid rgba(74, 85, 104, 0.3);
          }
 
          .filter-item {
@@ -139,7 +217,6 @@
          .filter-label {
              color: #e0e6ed;
              font-size: 0.9em;
-             /* Removed margin-right as gap handles spacing */
          }
 
 
@@ -161,12 +238,12 @@
 
         /* Style for the filter dropdowns and manual input */
         .filter-select, .filter-input {
-            background-color: #2d3a4b; /* Match textarea background */
+            background-color: #2d3a4b; /* Darker input background */
             color: #e0e6ed; /* Match text color */
             border: 1px solid #4a5568; /* Subtle border */
             border-radius: 6px;
             padding: 8px 10px; /* Adjusted padding */
-            font-size: 1rem; /* Match button font size */
+            font-size: 0.9rem; /* Slightly smaller font for filters */
             cursor: pointer;
             transition: border-color 0.3s ease;
         }
@@ -210,7 +287,7 @@
          #jedec-button {
              background-color: #007acc; /* Microsoft Azure Blue (common for tech) */
              color: #ffffff; /* White text */
-         }
+        }
 
          #jedec-button:hover {
              background-color: #005f99; /* Darker blue on hover */
@@ -233,81 +310,80 @@
              background-color: #e093e0; /* Lighter orchid on hover */
          }
 
+         /* Style for the new Copy Links dropdown */
+         #copy-links-dropdown-container {
+             position: relative; /* Needed for absolute positioning of dropdown content */
+             display: inline-block; /* Allow button and dropdown to be inline */
+             margin-bottom: 24px; /* Space below the copy button */
+         }
 
-        #copy-buttons-area {
-            margin-top: 20px; /* Space below generate button */
-            text-align: center;
-            padding-bottom: 20px; /* Space before results start */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator line above results */
-        }
-
-        #copy-buttons-area p {
-            color: #9ba3af; /* Match footer text color */
-            font-size: 0.9em;
-            margin-bottom: 10px; /* Space below the text */
-        }
-
-        #copy-buttons-container {
-            display: flex; /* Use flexbox to arrange buttons */
-            flex-wrap: wrap; /* Allow buttons to wrap */
-            justify-content: center; /* Center the buttons */
-            gap: 8px; /* Adjusted space between copy buttons */
-        }
-
-        .copy-button {
-             /* Base styling */
-             color: #e0e6ed; /* White text */
-             font-size: 0.8em; /* Slightly larger font size */
-             padding: 5px 10px; /* Adjusted padding */
-             border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-             border-radius: 4px;
+         #copy-links-button {
+             background-color: #3498db; /* A shade of blue */
+             color: #ffffff;
+             font-weight: 600;
+             padding: 10px 20px;
+             border-radius: 6px;
              cursor: pointer;
-             transition: all 0.2s ease;
-             white-space: nowrap; /* Prevent button text from wrapping */
-             font-weight: 500; /* Medium font weight */
-             text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for readability */
-        }
+             transition: background-color 0.3s ease;
+             border: none;
+             display: flex; /* Use flex to align text and arrow */
+             align-items: center;
+             gap: 8px; /* Space between text and arrow */
+         }
 
-        /* Specific colors for copy buttons */
-        .copy-button[data-site="Scholar"] { background-color: rgba(100, 149, 237, 0.3); border-color: rgba(100, 149, 237, 0.5); } /* Cornflower Blue */
-        .copy-button[data-site="Archive"] { background-color: rgba(135, 206, 235, 0.3); border-color: rgba(135, 206, 235, 0.5); } /* Sky Blue */
-        .copy-button[data-site="Anna's"] { background-color: rgba(218, 112, 214, 0.3); border-color: rgba(218, 112, 214, 0.5); } /* Orchid */
-        .copy-button[data-site="LibGen"] { background-color: rgba(144, 238, 144, 0.3); border-color: rgba(144, 238, 144, 0.5); } /* Light Green */
-        .copy-button[data-site="Sci-Hub"] { background-color: rgba(255, 99, 71, 0.3); border-color: rgba(255, 99, 71, 0.5); } /* Tomato */
-        .copy-button[data-site="eBay"] { background-color: rgba(255, 215, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); } /* Gold */
-        .copy-button[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
-        .copy-button[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
-        .copy-button[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
-        .copy-button[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
-        .copy-button[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
-        .copy-button[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
-        .copy-button[data-site="BookBub"] { background-color: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); } /* Red */
-        .copy-button[data-site="Google Books"] { background-color: rgba(128, 128, 128, 0.3); border-color: rgba(128, 128, 128, 0.5); } /* Gray */
-        .copy-button[data-site="Facebook Marketplace"] { background-color: rgba(66, 103, 178, 0.3); border-color: rgba(66, 103, 178, 0.5); } /* Facebook Blue */
-        .copy-button[data-site="Craigslist"] { background-color: rgba(138, 183, 61, 0.3); border-color: rgba(138, 183, 61, 0.5); } /* Craigslist Green */
-        .copy-button[data-site="Advanced Google Search"] { background-color: rgba(244, 180, 0, 0.3); border-color: rgba(244, 180, 0, 0.5); } /* Google Yellow */
-        .copy-button[data-site="JEDEC Standards"] { background-color: rgba(0, 122, 204, 0.3); border-color: rgba(0, 122, 204, 0.5); } /* Azure Blue */
-        .copy-button[data-site="IEEE Xplore"] { background-color: rgba(0, 102, 153, 0.3); border-color: rgba(0, 102, 153, 0.5); } /* IEEE Blue */
-        .copy-button[data-site="ACM Digital Library"] { background-color: rgba(0, 170, 170, 0.3); border-color: rgba(0, 170, 170, 0.5); } /* ACM Teal */
-        .copy-button[data-site="ScienceDirect"] { background-color: rgba(255, 102, 0, 0.3); border-color: rgba(255, 102, 0, 0.5); } /* Elsevier Orange */
-        .copy-button[data-site="SpringerLink"] { background-color: rgba(60, 179, 113, 0.3); border-color: rgba(60, 179, 113, 0.5); } /* MediumSeaGreen */
-        .copy-button[data-site="ArXiv"] { background-color: rgba(180, 40, 45, 0.3); border-color: rgba(180, 40, 45, 0.5); } /* ArXiv Red */
-        .copy-button[data-site="Google Patents"] { background-color: rgba(169, 169, 169, 0.3); border-color: rgba(169, 169, 169, 0.5); } /* DarkGray */
-        .copy-button[data-site="USPTO Search"] { background-color: rgba(0, 51, 102, 0.3); border-color: rgba(0, 51, 102, 0.5); } /* Dark Blue */
-        .copy-button[data-site="EPO Search"] { background-color: rgba(255, 140, 0, 0.3); border-color: rgba(255, 140, 0, 0.5); } /* DarkOrange */
-        .copy-button[data-site="GitHub Search"] { background-color: rgba(27, 31, 35, 0.3); border-color: rgba(27, 31, 35, 0.5); } /* GitHub Black */
-        .copy-button[data-site="GitLab Search"] { background-color: rgba(252, 109, 38, 0.3); border-color: rgba(252, 109, 38, 0.5); } /* GitLab Orange */
-        .copy-button[data-site="Stack Overflow"] { background-color: rgba(244, 128, 36, 0.3); border-color: rgba(244, 128, 36, 0.5); } /* Stack Overflow Orange */
+         #copy-links-button:hover {
+             background-color: #2980b9; /* Darker blue on hover */
+         }
+
+         #copy-links-button .arrow {
+             border: solid white;
+             border-width: 0 2px 2px 0;
+             display: inline-block;
+             padding: 3px;
+             transform: rotate(45deg); /* Down arrow */
+             margin-top: 2px; /* Align arrow vertically */
+             transition: transform 0.3s ease;
+         }
+
+         #copy-links-button.active .arrow {
+             transform: rotate(-135deg); /* Up arrow when active */
+             margin-top: -2px; /* Adjust alignment when pointing up */
+         }
 
 
-        .copy-button:hover {
-             background-color: rgba(160, 206, 217, 0.2); /* Darker background on hover */
-             border-color: #a0ced9;
-             color: #ffffff; /* White text on hover */
-        }
+         #copy-links-dropdown-content {
+             display: none; /* Hidden by default */
+             position: absolute;
+             background-color: #2d3a4b; /* Match filter background */
+             min-width: 200px; /* Minimum width */
+             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+             z-index: 1;
+             border-radius: 6px;
+             padding: 8px;
+             margin-top: 4px; /* Space below the button */
+             left: 50%; /* Center the dropdown */
+             transform: translateX(-50%); /* Center the dropdown */
+             max-height: 300px; /* Limit height */
+             overflow-y: auto; /* Add scroll if content overflows */
+             border: 1px solid #4a5568; /* Subtle border */
+         }
 
-         .copy-button:active {
-             background-color: rgba(160, 206, 217, 0.3); /* Even darker when clicked */
+         #copy-links-dropdown-content button {
+             color: #e0e6ed;
+             padding: 8px 12px;
+             text-decoration: none;
+             display: block;
+             background: none; /* Remove default button background */
+             border: none; /* Remove default button border */
+             width: 100%; /* Full width */
+             text-align: left; /* Align text to the left */
+             cursor: pointer;
+             transition: background-color 0.2s ease;
+             border-radius: 4px; /* Small border radius for items */
+         }
+
+         #copy-links-dropdown-content button:hover {
+             background-color: rgba(90, 200, 250, 0.2); /* Light blue hover */
          }
 
 
@@ -431,6 +507,7 @@
              margin-bottom: 15px; /* Space above the first book in the category */
              font-size: 1.2em; /* Slightly larger font */
              font-weight: 600;
+             /* Add padding/margin to align with resource items if needed */
          }
 
 
@@ -463,23 +540,8 @@
             <h2 class="text-3xl text-center mb-8">Media & Technical Resource Search Link Generator</h2>
              <p id="resource-description">Generate search links for a wide range of media (books, audio, etc.) and technical resources (papers, standards, patents, code) across various online platforms, including digital libraries, marketplaces, academic databases, and code repositories.</p>
 
-             <div id="resource-guide">
-                 <h3>How to Use:</h3>
-                 <ul>
-                     <li>Paste titles or topics into the text area below, one per line.</li>
-                     <li>Use lines starting with `---` to create category dividers in the results.</li>
-                     <li>Use the filter controls (Language, File Type, Order, Attribute, Year Range, Author, Exact Phrase) to refine your searches.</li>
-                     <li>The "File Type" dropdown provides common formats; use the manual input for others.</li>
-                     <li>Check "Exact Phrase" to search for the title/topic as a precise phrase (may reduce results).</li>
-                     <li>Click "Generate Links" to see individual search links below each title for all included sites.</li>
-                     <li>Click the colored buttons below the filters to copy all generated links for a specific site.</li>
-                     <li>Use the specialized search buttons ("Advanced Google Search", "JEDEC Standards (Google)") for targeted Google searches across all titles with applied filters.</li>
-                     <li>Use the toggle buttons ("Toggle Digital Library", "Toggle Marketplaces", etc.) to show or hide specific categories of search links in the results for easier navigation.</li>
-                 </ul>
-             </div>
-
-
-            <textarea id="resource-titles-textarea" placeholder="Paste media or technical resource titles/topics here, one per line...">--- Technical Books ---
+            <div id="input-guide-container">
+                 <textarea id="resource-titles-textarea" placeholder="Paste media or technical resource titles/topics here, one per line...">--- Technical Books ---
 Introduction to Plasma Physics and Controlled Fusion
 Fundamentals of Plasma Physics
 Physics of Fully Ionized Plasmas
@@ -646,13 +708,30 @@ Spy x Family
 Chainsaw Man
 </textarea>
 
+                <div id="resource-guide">
+                 <h3>How to Use:</h3>
+                 <ul>
+                     <li>Paste titles or topics into the text area on the left, one per line.</li>
+                     <li>Use lines starting with `---` to create category dividers in the results.</li>
+                     <li>Use the filter controls below to refine your searches.</li>
+                     <li>The "File Type" dropdown provides common formats; use the manual input for others.</li>
+                     <li>Check "Exact Phrase" to search for the title/topic as a precise phrase (may reduce results).</li>
+                     <li>Click "Generate Links" to see individual search links below each title.</li>
+                     <li>Use the "Copy Links for Site" dropdown to copy all generated links for a specific platform.</li>
+                     <li>Use the specialized search buttons ("Advanced Google Search", "JEDEC Standards") for targeted Google searches across all titles with applied filters.</li>
+                     <li>Use the toggle buttons to show or hide specific categories of search links in the results.</li>
+                 </ul>
+             </div>
+            </div>
+
+
             <div class="flex flex-col items-center mt-6 gap-6">
 
                 <div class="control-group">
                     <button id="generate-links-button">Generate Links</button>
                 </div>
 
-                <div class="control-group filter-group flex-col md:flex-row md:items-start">
+                <div id="filter-controls">
                     <div class="filter-item">
                         <label for="language-select" class="filter-label">Language:</label>
                         <select id="language-select" class="filter-select">
@@ -720,9 +799,7 @@ Chainsaw Man
                             <option value="rare">Rare</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="control-group filter-group flex-col md:flex-row md:items-start">
                      <div class="filter-item">
                          <label for="min-year-input" class="filter-label">Year Range:</label>
                          <input type="number" id="min-year-input" class="filter-input w-20" placeholder="Min Year">
@@ -747,10 +824,15 @@ Chainsaw Man
                      <button id="jedec-button" class="specialized-button">JEDEC Standards (Google)</button>
                 </div>
 
-                <div id="copy-buttons-area" class="control-group flex-col">
-                     <p class="text-gray-400 text-sm mb-4">Copy links for:</p> <div id="copy-buttons-container" class="control-group !gap-2 !p-0 !bg-transparent !border-none">
-                        </div>
-                </div>
+                <div id="copy-links-dropdown-container">
+                     <button id="copy-links-button">
+                         Copy Links for Site
+                         <span class="arrow"></span>
+                     </button>
+                     <div id="copy-links-dropdown-content">
+                         </div>
+                 </div>
+
 
                  <div class="control-group flex-col md:flex-row md:items-center">
                      <button id="toggle-digital-library-links-button" class="toggle-button">Toggle Digital Library</button>
@@ -786,8 +868,6 @@ Chainsaw Man
             const textarea = document.getElementById('resource-titles-textarea');
             const generateButton = document.getElementById('generate-links-button');
             const resultsDiv = document.getElementById('search-results');
-            const copyButtonsArea = document.getElementById('copy-buttons-area');
-            const copyButtonsContainer = document.getElementById('copy-buttons-container');
 
             // Filter Inputs
             const languageSelect = document.getElementById('language-select');
@@ -795,23 +875,27 @@ Chainsaw Man
             const manualFiletypeInput = document.getElementById('manual-filetype-input');
             const orderSelect = document.getElementById('order-select');
             const attributeSelect = document.getElementById('attribute-select');
-            const minYearInput = document.getElementById('min-year-input'); // New
-            const maxYearInput = document.getElementById('max-year-input'); // New
-            const authorInput = document.getElementById('author-input'); // New
-            const exactPhraseCheckbox = document.getElementById('exact-phrase-checkbox'); // New
+            const minYearInput = document.getElementById('min-year-input');
+            const maxYearInput = document.getElementById('max-year-input');
+            const authorInput = document.getElementById('author-input');
+            const exactPhraseCheckbox = document.getElementById('exact-phrase-checkbox');
 
             // Specialized Search Buttons
             const advancedGoogleButton = document.getElementById('advanced-google-button');
             const jedecButton = document.getElementById('jedec-button');
 
             // Toggle Buttons
-            const toggleDigitalLibraryLinksButton = document.getElementById('toggle-digital-library-links-button'); // Renamed
-            const toggleMarketplaceLinksButton = document.getElementById('toggle-marketplace-links-button'); // New
-            const toggleStandardsLinksButton = document.getElementById('toggle-standards-links-button'); // Renamed
-            const toggleTechDBsLinksButton = document.getElementById('toggle-tech-dbs-links-button'); // New
-            const togglePatentsLinksButton = document.getElementById('toggle-patents-links-button'); // New
-            const toggleCodeLinksButton = document.getElementById('toggle-code-links-button'); // New
-            const toggleForumsLinksButton = document.getElementById('toggle-forums-links-button'); // New
+            const toggleDigitalLibraryLinksButton = document.getElementById('toggle-digital-library-links-button');
+            const toggleMarketplaceLinksButton = document.getElementById('toggle-marketplace-links-button');
+            const toggleStandardsLinksButton = document.getElementById('toggle-standards-links-button');
+            const toggleTechDBsLinksButton = document.getElementById('toggle-tech-dbs-links-button');
+            const togglePatentsLinksButton = document.getElementById('toggle-patents-links-button');
+            const toggleCodeLinksButton = document.getElementById('toggle-code-links-button');
+            const toggleForumsLinksButton = document.getElementById('toggle-forums-links-button');
+
+            // Copy Links Dropdown
+            const copyLinksButton = document.getElementById('copy-links-button');
+            const copyLinksDropdownContent = document.getElementById('copy-links-dropdown-content');
 
 
             // Define the search URLs for ALL sites
@@ -852,7 +936,6 @@ Chainsaw Man
 
             // Combine all search URLs for iteration
             const allSearchUrls = { ...simpleSearchUrls, ...googleSiteSearchUrls };
-
 
              // Define the sites whose individual links are hidden by default but can be toggled
              const sitesToToggleDigitalLibrary = [
@@ -901,7 +984,6 @@ Chainsaw Man
              const sitesToToggleForums = [
                  'Stack Overflow'
              ];
-
 
              // Combine all toggled sites for initial hiding logic
              const allSitesToToggle = [
@@ -1119,7 +1201,7 @@ Chainsaw Man
 
 
                 resultsDiv.innerHTML = ''; // Clear previous results
-                copyButtonsContainer.innerHTML = ''; // Clear previous copy buttons
+                copyLinksDropdownContent.innerHTML = ''; // Clear previous copy buttons
 
                 const resourceTitles = lines.filter(line => line.length > 0 && !line.startsWith('---'));
 
@@ -1199,7 +1281,8 @@ Chainsaw Man
                                  // Add a data attribute to identify the site for copying and toggling
                                 link.dataset.site = siteName;
                                  // Add class for general link styling
-                                link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
+                                 link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
+
 
                                 // Hide links based on toggle groups
                                 if (allSitesToToggle.includes(siteName)) {
@@ -1216,16 +1299,15 @@ Chainsaw Man
                     // Ignore empty lines that don't start with '---'
                 });
 
-                // Generate copy buttons after generating results
-                 // Iterate through ALL site names from the allSearchUrls object, plus the special buttons
+                // Populate the Copy Links Dropdown
                  const allCopySites = Object.keys(allSearchUrls).concat(['Advanced Google Search', 'JEDEC Standards']);
-
-                 for (const siteName of allCopySites) {
+                 allCopySites.forEach(siteName => {
                      const copyButton = document.createElement('button');
-                     copyButton.classList.add('copy-button');
-                     copyButton.textContent = siteName; // Just the site name as button text
-                     copyButton.dataset.site = siteName; // Store the site name in a data attribute
+                     copyButton.textContent = siteName;
+                     copyButton.dataset.site = siteName;
+                     copyLinksDropdownContent.appendChild(copyButton);
 
+                     // Add click listener to each dropdown item
                      copyButton.addEventListener('click', async () => {
                          const siteToCopy = copyButton.dataset.site;
                          const urlsToCopy = [];
@@ -1297,15 +1379,12 @@ Chainsaw Man
                                  copyButton.textContent = `Copied!`; // Shorter feedback
                                   // Temporarily change background color on success
                                  const originalBg = copyButton.style.backgroundColor;
-                                 const originalBorder = copyButton.style.borderColor;
                                  copyButton.style.backgroundColor = 'rgba(76, 175, 80, 0.5)'; /* Greenish for success */
-                                 copyButton.style.borderColor = 'rgba(76, 175, 80, 0.7)';
 
 
                                  setTimeout(() => {
                                      copyButton.textContent = originalText;
                                       copyButton.style.backgroundColor = originalBg; // Revert background
-                                      copyButton.style.borderColor = originalBorder; // Revert border
                                  }, 1500); // Revert text and color after 1.5 seconds
                              } catch (err) {
                                  console.error('Failed to copy URLs: ', err);
@@ -1313,23 +1392,22 @@ Chainsaw Man
                                   copyButton.textContent = `Failed!`; // Feedback on failure
                                    // Temporarily change background color on failure
                                   const originalBg = copyButton.style.backgroundColor;
-                                  const originalBorder = copyButton.style.borderColor;
                                   copyButton.style.backgroundColor = 'rgba(244, 67, 54, 0.5)'; /* Reddish for failure */
-                                  copyButton.style.borderColor = 'rgba(244, 67, 54, 0.7)';
 
                                  setTimeout(() => {
                                       copyButton.textContent = originalText;
                                       copyButton.style.backgroundColor = originalBg; // Revert background
-                                      copyButton.style.borderColor = originalBorder; // Revert border
                                  }, 2000); // Revert text and color after 2 seconds
                              }
                          } else {
                              alert(`No ${siteToCopy} links found to copy.`);
                          }
+                         // Hide the dropdown after copying
+                         copyLinksDropdownContent.style.display = 'none';
+                         copyLinksButton.classList.remove('active');
                      });
+                 });
 
-                     copyButtonsContainer.appendChild(copyButton);
-                 }
 
                  // Add event listener for the Advanced Google Search button
                  advancedGoogleButton.addEventListener('click', () => {
@@ -1462,12 +1540,22 @@ Chainsaw Man
                 toggleSiteVisibility(sitesToToggleForums);
             });
 
-             // Initial state: Hide the toggled groups on page load
-             // This is handled by the link generation loop, which checks allSitesToToggle
-             // No need for an explicit call here unless you want to ensure it happens *after* generation
-             // If you want to ensure they are hidden on initial page load before generating,
-             // you would need to call toggleSiteVisibility for each group here, but that's less efficient.
-             // The current method in the generateButton click handler is better as it hides during creation.
+            // Toggle the display of the copy links dropdown
+            copyLinksButton.addEventListener('click', () => {
+                copyLinksDropdownContent.style.display = copyLinksDropdownContent.style.display === 'block' ? 'none' : 'block';
+                copyLinksButton.classList.toggle('active'); // Toggle active class for arrow rotation
+            });
+
+            // Close the dropdown if the user clicks outside of it
+            window.addEventListener('click', (event) => {
+                if (!event.target.matches('#copy-links-button') && !event.target.matches('#copy-links-button *')) {
+                    if (copyLinksDropdownContent.style.display === 'block') {
+                        copyLinksDropdownContent.style.display = 'none';
+                        copyLinksButton.classList.remove('active');
+                    }
+                }
+            });
+
 
         });
     </script>
