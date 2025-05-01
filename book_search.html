@@ -92,18 +92,80 @@
             background-color: #89d0f8; /* Lighter blue on hover */
         }
 
+        #copy-buttons-area {
+            margin-top: 20px; /* Space below generate button */
+            text-align: center;
+            padding-bottom: 20px; /* Space before results start */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator line above results */
+        }
+
+        #copy-buttons-area p {
+            color: #9ba3af; /* Match footer text color */
+            font-size: 0.9em;
+            margin-bottom: 10px; /* Space below the text */
+        }
+
+        #copy-buttons-container {
+            display: flex; /* Use flexbox to arrange buttons */
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            justify-content: center; /* Center the buttons */
+            gap: 6px; /* Reduced space between copy buttons */
+        }
+
+        .copy-button {
+             /* Base styling */
+             color: #e0e6ed; /* White text */
+             font-size: 0.7em; /* Small font size */
+             padding: 3px 6px; /* Padding */
+             border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+             border-radius: 4px;
+             cursor: pointer;
+             transition: all 0.2s ease;
+             white-space: nowrap; /* Prevent button text from wrapping */
+             font-weight: 500; /* Medium font weight */
+             text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for readability */
+        }
+
+        /* Specific colors for copy buttons */
+        .copy-button[data-site="Scholar"] { background-color: rgba(100, 149, 237, 0.3); border-color: rgba(100, 149, 237, 0.5); } /* Cornflower Blue */
+        .copy-button[data-site="Archive"] { background-color: rgba(135, 206, 235, 0.3); border-color: rgba(135, 206, 235, 0.5); } /* Sky Blue */
+        .copy-button[data-site="Anna's"] { background-color: rgba(218, 112, 214, 0.3); border-color: rgba(218, 112, 214, 0.5); } /* Orchid */
+        .copy-button[data-site="LibGen"] { background-color: rgba(144, 238, 144, 0.3); border-color: rgba(144, 238, 144, 0.5); } /* Light Green */
+        .copy-button[data-site="Sci-Hub"] { background-color: rgba(255, 99, 71, 0.3); border-color: rgba(255, 99, 71, 0.5); } /* Tomato */
+        .copy-button[data-site="Audio"] { background-color: rgba(90, 200, 250, 0.3); border-color: rgba(90, 200, 250, 0.5); } /* Bright Sky Blue */
+        .copy-button[data-site="eBay"] { background-color: rgba(255, 215, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); } /* Gold */
+        .copy-button[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
+        .copy-button[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
+        .copy-button[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
+        .copy-button[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
+        .copy-button[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
+        .copy-button[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
+        .copy-button[data-site="BookBub"] { background-color: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); } /* Red */
+        .copy-button[data-site="Google Books"] { background-color: rgba(128, 128, 128, 0.3); border-color: rgba(128, 128, 128, 0.5); } /* Gray */
+
+
+        .copy-button:hover {
+             background-color: rgba(160, 206, 217, 0.2); /* Darker background on hover */
+             border-color: #a0ced9;
+             color: #ffffff; /* White text on hover */
+        }
+
+         .copy-button:active {
+             background-color: rgba(160, 206, 217, 0.3); /* Even darker when clicked */
+         }
+
+
         #search-results {
-            margin-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
-            padding-top: 20px;
+            margin-top: 0; /* Remove top margin as border is in container above */
+            padding-top: 20px; /* Padding from the separator line */
         }
 
         /* Style for each individual book result item */
         .book-result-item {
             display: flex; /* Use flexbox for layout */
             justify-content: space-between; /* Space out content */
-            align-items: flex-start; /* Align items to the top */
-            padding: 8px 0; /* Reduced padding */
+            align-items: center; /* Center items vertically */
+            padding: 6px 0; /* Reduced padding */
             border-bottom: 1px dashed rgba(255, 255, 255, 0.05); /* Subtle separator */
             flex-wrap: wrap; /* Allow items to wrap on smaller screens */
             margin-bottom: 0; /* Remove bottom margin */
@@ -118,7 +180,7 @@
             font-weight: 600; /* Slightly less bold than h2/h1 */
             flex-grow: 1; /* Allow title to grow */
             margin-right: 10px; /* Space between title and links */
-            flex-basis: 60%; /* Give title more space initially */
+            flex-basis: auto; /* Allow flexbox to determine initial width */
             min-width: 150px; /* Ensure title has a minimum width before wrapping */
         }
 
@@ -127,41 +189,64 @@
         .search-links {
             flex-shrink: 0; /* Prevent links from shrinking */
             display: flex; /* Use flexbox for links */
-            gap: 4px; /* Reduced space between link buttons */
+            gap: 3px; /* Further reduced space between link buttons */
             align-items: center; /* Vertically align link buttons */
              margin-top: 2px; /* Small margin to align better if details wrap */
-             flex-wrap: nowrap; /* Prevent links themselves from wrapping onto multiple lines */
+             flex-wrap: wrap; /* Allow buttons to wrap if needed */
+             justify-content: flex-end; /* Align buttons to the right if they wrap */
         }
 
-        /* Style for the individual link buttons */
+        /* Style for the individual link buttons - Apply colors here */
         .search-links a {
-            color: #a0ced9; /* Lighter blue text */
-            font-size: 0.7em; /* Smaller font */
+            color: #e0e6ed; /* White text for links */
+            font-size: 0.65em; /* Even smaller font */
             text-decoration: none; /* No underline */
-            padding: 2px 6px; /* Reduced padding for smaller buttons */
-            border: 1px solid rgba(160, 206, 217, 0.3); /* Subtle border */
+            padding: 1px 5px; /* Reduced padding for smaller buttons */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
             border-radius: 4px; /* Rounded corners */
-            margin-right: 4px; /* Reduced space between buttons */
+            margin-right: 3px; /* Reduced space between buttons */
             display: inline-block; /* Allow padding and margin */
             transition: all 0.2s ease;
+            white-space: nowrap; /* Prevent button text from wrapping */
+            font-weight: 500; /* Medium font weight */
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for readability */
         }
 
-        .search-links a:last-child {
-            margin-right: 0; /* No margin on the last button */
-        }
+         /* Specific colors for search link buttons - Matching copy buttons */
+        .search-links a[data-site="Scholar"] { background-color: rgba(100, 149, 237, 0.3); border-color: rgba(100, 149, 237, 0.5); } /* Cornflower Blue */
+        .search-links a[data-site="Archive"] { background-color: rgba(135, 206, 235, 0.3); border-color: rgba(135, 206, 235, 0.5); } /* Sky Blue */
+        .search-links a[data-site="Anna's"] { background-color: rgba(218, 112, 214, 0.3); border-color: rgba(218, 112, 214, 0.5); } /* Orchid */
+        .search-links a[data-site="LibGen"] { background-color: rgba(144, 238, 144, 0.3); border-color: rgba(144, 238, 144, 0.5); } /* Light Green */
+        .search-links a[data-site="Sci-Hub"] { background-color: rgba(255, 99, 71, 0.3); border-color: rgba(255, 99, 71, 0.5); } /* Tomato */
+        .search-links a[data-site="Audio"] { background-color: rgba(90, 200, 250, 0.3); border-color: rgba(90, 200, 250, 0.5); } /* Bright Sky Blue */
+        .search-links a[data-site="eBay"] { background-color: rgba(255, 215, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); } /* Gold */
+        .search-links a[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
+        .search-links a[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
+        .search-links a[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
+        .search-links a[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
+        .search-links a[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
+        .search-links a[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
+        .search-links a[data-site="BookBub"] { background-color: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); } /* Red */
+        .search-links a[data-site="Google Books"] { background-color: rgba(128, 128, 128, 0.3); border-color: rgba(128, 128, 128, 0.5); } /* Gray */
+
 
         .search-links a:hover {
-            background-color: rgba(160, 206, 217, 0.1); /* Subtle background on hover */
-            border-color: #a0ced9;
-            color: #ffffff; /* White text on hover */
+             background-color: rgba(160, 206, 217, 0.2); /* Darker background on hover */
+             border-color: #a0ced9;
+             color: #ffffff; /* White text on hover */
         }
+
+         .search-links a:active {
+             background-color: rgba(160, 206, 217, 0.3); /* Even darker when clicked */
+         }
+
 
         /* Style for the divider line - Made more distinct */
         .divider {
             border: none;
             height: 2px; /* Thicker line */
             background: linear-gradient(to right, rgba(218, 112, 214, 0.5), rgba(90, 200, 250, 0.5)); /* Gradient color */
-            margin: 30px 0; /* More space above and below */
+            margin: 30px 0 15px 0; /* More space above, less below */
             width: 100%; /* Full width */
             border-radius: 1px; /* Slightly rounded ends */
         }
@@ -337,6 +422,13 @@ The Martian Chronicles
                 <button id="generate-links-button">Generate Links</button>
             </div>
 
+            <div id="copy-buttons-area">
+                 <p>Copy links for:</p>
+                <div id="copy-buttons-container">
+                    </div>
+            </div>
+
+
             <div id="search-results">
                 </div>
         </div>
@@ -347,7 +439,6 @@ The Martian Chronicles
             <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a> <a href="https://www.youtube.com/@EdwinHwu" target="_blank">🧪</a> <a href="https://www.youtube.com/watch?v=rJPKTCdk-WI" target="_blank">🔬</a></p>
              <div class="footer-nav-links">
                  <a href="index.html">Portfolio Home</a>
-                 <a href="reading_list.html">Mega Reading List</a>
                  <a href="study_plan.html">Study Plan</a>
             </div>
         </div>
@@ -356,20 +447,51 @@ The Martian Chronicles
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const textarea = document.getElementById('book-titles-textarea');
-            const button = document.getElementById('generate-links-button');
+            const generateButton = document.getElementById('generate-links-button');
             const resultsDiv = document.getElementById('search-results');
+            const copyButtonsArea = document.getElementById('copy-buttons-area'); // New container for text and buttons
+            const copyButtonsContainer = document.getElementById('copy-buttons-container'); // Container for buttons only
 
-            button.addEventListener('click', () => {
+            // Define the search URLs - keeping the order consistent for button generation
+            const searchUrls = {
+                'Scholar': `https://scholar.google.com/scholar?q=`,
+                'Archive': `https://archive.org/search?query=`,
+                "Anna's": `https://annas-archive.org/search?q=`,
+                'LibGen': `http://libgen.rs/search.php?req=`,
+                'Sci-Hub': `https://sci-hub.st/https://scholar.google.com/scholar?q=`, // Sci-Hub often works best with a Scholar URL
+                'Audio': `https://archive.org/search?query=`, // Base for Audio search
+                'eBay': `https://www.ebay.com/sch/i.html?_nkw=`, // Base for eBay search
+                'Amazon': `https://www.amazon.com/s?k=`, // Base for Amazon search
+                'Audible': `https://www.audible.com/search?keywords=`, // Base for Audible search
+                'LibriVox': `https://librivox.org/search?q=`, // Base for LibriVox search
+                'Project Gutenberg': `https://www.gutenberg.org/ebooks/search/?query=`, // Base for Project Gutenberg search
+                'Open Library': `https://openlibrary.org/search?q=`, // Base for Open Library search
+                'ManyBooks': `https://manybooks.net/search/google?search=`, // Base for ManyBooks.net search
+                'BookBub': `https://www.bookbub.com/search?search=`, // Base for BookBub search
+                'Google Books': `https://books.google.com/books?q=` // Base for Google Books search
+            };
+
+             // Define URL suffixes for specific searches
+             const urlSuffixes = {
+                 'Audio': `&and%5B%5D=mediatype%3A%22audio%22`, // Suffix for Archive.org Audio search
+                 'eBay': `&_sop=15` // Suffix for eBay lowest price sort
+             };
+
+
+            generateButton.addEventListener('click', () => {
                 const lines = textarea.value.split('\n').map(line => line.trim()); // Get all lines, trim whitespace
 
                 resultsDiv.innerHTML = ''; // Clear previous results
+                copyButtonsContainer.innerHTML = ''; // Clear previous copy buttons
 
-                if (lines.filter(line => line.length > 0 && !line.startsWith('---')).length === 0) {
+                const bookTitles = lines.filter(line => line.length > 0 && !line.startsWith('---'));
+
+                if (bookTitles.length === 0) {
                      resultsDiv.innerHTML = '<p class="text-center text-gray-400">Please enter book titles in the text area above.</p>';
                      return;
                  }
 
-
+                // Generate book links
                 lines.forEach(line => {
                     if (line.startsWith('---')) {
                         // If the line starts with '---', create a divider and heading
@@ -385,22 +507,10 @@ The Martian Chronicles
                              resultsDiv.appendChild(heading);
                          }
 
-
                     } else if (line.length > 0) {
                         // If it's not a divider and not empty, treat as a book title
                         const title = line;
                         const encodedTitle = encodeURIComponent(title);
-
-                        // Define the base URLs for different search engines/archives
-                        const searchUrls = {
-                            'Scholar': `https://scholar.google.com/scholar?q=${encodedTitle}`,
-                            'Archive': `https://archive.org/search?query=${encodedTitle}`,
-                            "Anna's": `https://annas-archive.org/search?q=${encodedTitle}`,
-                            'LibGen': `http://libgen.rs/search.php?req=${encodedTitle}&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def`,
-                            'Sci-Hub': `https://sci-hub.st/https://scholar.google.com/scholar?q=${encodedTitle}`, // Sci-Hub often works best with a Scholar URL
-                            'Audio': `https://archive.org/search?query=${encodedTitle}&and%5B%5D=mediatype%3A%22audio%22`, // Search specifically for audiobooks on Archive.org with mediatype filter
-                            'eBay': `https://www.ebay.com/sch/i.html?_nkw=${encodedTitle}&_sop=15` // eBay search, sorted by lowest price (_sop=15)
-                        };
 
                         // Create HTML elements for the book title and its links
                         const bookResultItem = document.createElement('div');
@@ -415,13 +525,18 @@ The Martian Chronicles
                         linksDiv.classList.add('search-links'); // Apply class for styling
 
                         // Create and append the links as styled buttons
-                        for (const [name, url] of Object.entries(searchUrls)) {
+                        for (const [name, baseUrl] of Object.entries(searchUrls)) {
                             const link = document.createElement('a');
-                            link.href = url;
+                            // Construct the full URL using the base and potential suffix
+                            const fullUrl = baseUrl + encodedTitle + (urlSuffixes[name] || '');
+
+                            link.href = fullUrl;
                             link.textContent = `[${name}]`; // Text inside the button
                             link.target = '_blank'; // Open link in a new tab
-                            // Tailwind classes for button-like appearance (adapted from Mega Reading List)
-                            link.classList.add('text-sm', 'text-a0ced9', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'border-a0ced9', 'border-opacity-30', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'hover:bg-a0ced9', 'hover:bg-opacity-10', 'mr-1'); // Reduced mr-1 for less space
+                             // Add a data attribute to identify the site for copying
+                            link.dataset.site = name;
+                             // Add class for general link styling
+                            link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
 
                             linksDiv.appendChild(link);
                         }
@@ -431,6 +546,67 @@ The Martian Chronicles
                     }
                     // Ignore empty lines that don't start with '---'
                 });
+
+                // Generate copy buttons after generating results
+                 for (const siteName of Object.keys(searchUrls)) {
+                     const copyButton = document.createElement('button');
+                     copyButton.classList.add('copy-button');
+                     copyButton.textContent = siteName; // Just the site name as button text
+                     copyButton.dataset.site = siteName; // Store the site name in a data attribute
+
+                     copyButton.addEventListener('click', async () => {
+                         const siteToCopy = copyButton.dataset.site;
+                         const urlsToCopy = [];
+                         const bookItems = resultsDiv.querySelectorAll('.book-result-item');
+
+                         bookItems.forEach(item => {
+                             const link = item.querySelector(`.search-links a[data-site="${siteToCopy}"]`);
+                             if (link && link.href) {
+                                 urlsToCopy.push(link.href);
+                             }
+                         });
+
+                         if (urlsToCopy.length > 0) {
+                             try {
+                                 await navigator.clipboard.writeText(urlsToCopy.join('\n'));
+                                 const originalText = copyButton.textContent;
+                                 copyButton.textContent = `Copied!`; // Shorter feedback
+                                  // Temporarily change background color on success
+                                 const originalBg = copyButton.style.backgroundColor;
+                                 const originalBorder = copyButton.style.borderColor;
+                                 copyButton.style.backgroundColor = 'rgba(76, 175, 80, 0.5)'; /* Greenish for success */
+                                 copyButton.style.borderColor = 'rgba(76, 175, 80, 0.7)';
+
+
+                                 setTimeout(() => {
+                                     copyButton.textContent = originalText;
+                                      copyButton.style.backgroundColor = originalBg; // Revert background
+                                      copyButton.style.borderColor = originalBorder; // Revert border
+                                 }, 1500); // Revert text and color after 1.5 seconds
+                             } catch (err) {
+                                 console.error('Failed to copy URLs: ', err);
+                                  const originalText = copyButton.textContent;
+                                  copyButton.textContent = `Failed!`; // Feedback on failure
+                                   // Temporarily change background color on failure
+                                  const originalBg = copyButton.style.backgroundColor;
+                                  const originalBorder = copyButton.style.borderColor;
+                                  copyButton.style.backgroundColor = 'rgba(244, 67, 54, 0.5)'; /* Reddish for failure */
+                                  copyButton.style.borderColor = 'rgba(244, 67, 54, 0.7)';
+
+                                 setTimeout(() => {
+                                      copyButton.textContent = originalText;
+                                      copyButton.style.backgroundColor = originalBg; // Revert background
+                                      copyButton.style.borderColor = originalBorder; // Revert border
+                                 }, 2000); // Revert text and color after 2 seconds
+                             }
+                         } else {
+                             alert(`No ${siteToCopy} links found to copy.`);
+                         }
+                     });
+
+                     copyButtonsContainer.appendChild(copyButton);
+                 }
+
             });
         });
     </script>
