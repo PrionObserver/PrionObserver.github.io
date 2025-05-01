@@ -92,6 +92,24 @@
             background-color: #89d0f8; /* Lighter blue on hover */
         }
 
+        /* Style for the language select dropdown */
+        #language-select {
+            background-color: #2d3a4b; /* Match textarea background */
+            color: #e0e6ed; /* Match text color */
+            border: 1px solid #4a5568; /* Match textarea border */
+            border-radius: 6px;
+            padding: 10px; /* Match button padding */
+            font-size: 1rem; /* Match button font size */
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        #language-select:focus {
+            outline: none;
+            border-color: #5ac8fa; /* Highlight on focus */
+        }
+
+
         #copy-buttons-area {
             margin-top: 20px; /* Space below generate button */
             text-align: center;
@@ -163,11 +181,10 @@
         /* Style for each individual book result item */
         .book-result-item {
             display: flex; /* Use flexbox for layout */
-            justify-content: space-between; /* Space out content */
-            align-items: center; /* Center items vertically */
+            flex-direction: column; /* Stack title and links vertically */
+            align-items: flex-start; /* Align items to the start (left) */
             padding: 6px 0; /* Reduced padding */
             border-bottom: 1px dashed rgba(255, 255, 255, 0.05); /* Subtle separator */
-            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
             margin-bottom: 0; /* Remove bottom margin */
         }
 
@@ -178,10 +195,12 @@
         .book-title {
             color: #e0e6ed; /* Off-White for titles */
             font-weight: 600; /* Slightly less bold than h2/h1 */
-            flex-grow: 1; /* Allow title to grow */
-            margin-right: 10px; /* Space between title and links */
+            margin-right: 0; /* Remove right margin */
+            margin-bottom: 5px; /* Add space below the title */
             flex-basis: auto; /* Allow flexbox to determine initial width */
-            min-width: 150px; /* Ensure title has a minimum width before wrapping */
+            min-width: auto; /* Remove min-width constraint */
+             text-align: left; /* Ensure text is left-aligned */
+             width: 100%; /* Allow title to take full width */
         }
 
 
@@ -191,9 +210,10 @@
             display: flex; /* Use flexbox for links */
             gap: 3px; /* Further reduced space between link buttons */
             align-items: center; /* Vertically align link buttons */
-             margin-top: 2px; /* Small margin to align better if details wrap */
-             flex-wrap: wrap; /* Allow buttons to wrap if needed */
-             justify-content: flex-end; /* Align buttons to the right if they wrap */
+            margin-top: 0; /* Remove top margin */
+            flex-wrap: wrap; /* Allow buttons to wrap if needed */
+            justify-content: flex-start; /* Align buttons to the left */
+            width: 100%; /* Allow links container to take full width */
         }
 
         /* Style for the individual link buttons - Apply colors here */
@@ -223,6 +243,7 @@
         .search-links a[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
         .search-links a[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
         .search-links a[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
+        /* Note: These colors are defined but links won't be generated individually for these sites */
         .search-links a[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
         .search-links a[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
         .search-links a[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
@@ -418,8 +439,19 @@ Annihilation (Southern Reach #1)
 The Martian Chronicles
 </textarea>
 
-            <div class="text-center mt-6">
-                <button id="generate-links-button">Generate Links</button>
+            <div class="flex justify-center items-center mt-6">
+                <button id="generate-links-button" class="mr-4">Generate Links</button>
+                <select id="language-select" class="bg-gray-700 text-gray-200 border border-gray-600 rounded px-3 py-2 text-sm">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="zh">中文</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                    <option value="pt">Português</option>
+                    <option value="">Any Language</option>
+                </select>
             </div>
 
             <div id="copy-buttons-area">
@@ -451,8 +483,9 @@ The Martian Chronicles
             const resultsDiv = document.getElementById('search-results');
             const copyButtonsArea = document.getElementById('copy-buttons-area'); // New container for text and buttons
             const copyButtonsContainer = document.getElementById('copy-buttons-container'); // Container for buttons only
+            const languageSelect = document.getElementById('language-select'); // Get the language select dropdown
 
-            // Define the search URLs - keeping the order consistent for button generation
+            // Define the search URLs for ALL sites
             const searchUrls = {
                 'Scholar': `https://scholar.google.com/scholar?q=`,
                 'Archive': `https://archive.org/search?query=`,
@@ -471,15 +504,60 @@ The Martian Chronicles
                 'Google Books': `https://books.google.com/books?q=` // Base for Google Books search
             };
 
-             // Define URL suffixes for specific searches
-             const urlSuffixes = {
-                 'Audio': `&and%5B%5D=mediatype%3A%22audio%22`, // Suffix for Archive.org Audio search
-                 'eBay': `&_sop=15` // Suffix for eBay lowest price sort
+             // Define the sites that should have individual links displayed next to each book title
+             const sitesWithIndividualLinks = [
+                 'Scholar',
+                 'Archive',
+                 "Anna's",
+                 'LibGen',
+                 'Sci-Hub',
+                 'Audio',
+                 'eBay',
+                 'Amazon',
+                 'Audible',
+                 'LibriVox'
+             ];
+
+             // Define URL suffixes for specific searches (including language parameters)
+             const urlModifiers = {
+                 'Audio': (encodedTitle, langCode) => {
+                     return `&and%5B%5D=mediatype%3A%22audio%22`; // Suffix for Archive.org Audio search
+                 },
+                 'eBay': (encodedTitle, langCode) => {
+                     return `&_sop=15`; // Suffix for eBay lowest price sort
+                 },
+                 'Scholar': (encodedTitle, langCode) => {
+                     return langCode ? `&hl=${langCode}` : ''; // Google Scholar uses hl
+                 },
+                 "Anna's": (encodedTitle, langCode) => {
+                     return langCode ? `&lang=${langCode}` : ''; // Anna's Archive uses lang
+                 },
+                 'LibGen': (encodedTitle, langCode) => { // LibGen uses full language name
+                     const langMap = {
+                         'en': 'English', 'es': 'Spanish', 'fr': 'French', 'de': 'German',
+                         'zh': 'Chinese', 'ru': 'Russian', 'ja': 'Japanese', 'pt': 'Portuguese'
+                     };
+                     return langCode && langMap[langCode] ? `&language=${langMap[langCode]}` : '';
+                 },
+                 'Open Library': (encodedTitle, langCode) => { // Open Library uses language code, but often 'eng' for English
+                     const olLangMap = {
+                          'en': 'eng', 'es': 'spa', 'fr': 'fre', 'de': 'ger',
+                          'zh': 'chi', 'ru': 'rus', 'ja': 'jpn', 'pt': 'por'
+                     };
+                      return langCode && olLangMap[langCode] ? `&language=${olLangMap[langCode]}` : '';
+                 },
+                 'ManyBooks': (encodedTitle, langCode) => {
+                      return langCode ? `&language=${langCode}` : ''; // ManyBooks uses language code
+                 },
+                 'Google Books': (encodedTitle, langCode) => {
+                      return langCode ? `&hl=${langCode}&lr=lang_${langCode}` : ''; // Google Books uses hl and lr
+                 }
              };
 
 
             generateButton.addEventListener('click', () => {
                 const lines = textarea.value.split('\n').map(line => line.trim()); // Get all lines, trim whitespace
+                const selectedLanguage = languageSelect.value; // Get the selected language code
 
                 resultsDiv.innerHTML = ''; // Clear previous results
                 copyButtonsContainer.innerHTML = ''; // Clear previous copy buttons
@@ -516,7 +594,8 @@ The Martian Chronicles
                         const bookResultItem = document.createElement('div');
                         bookResultItem.classList.add('book-result-item'); // Use the new class
 
-                        const titleElement = document.createElement('span'); // Changed to span for inline flex
+                        // Use a div for the title so it takes its own line
+                        const titleElement = document.createElement('div');
                         titleElement.classList.add('book-title'); // Apply book title styling
                         titleElement.textContent = title;
                         bookResultItem.appendChild(titleElement);
@@ -525,20 +604,25 @@ The Martian Chronicles
                         linksDiv.classList.add('search-links'); // Apply class for styling
 
                         // Create and append the links as styled buttons
-                        for (const [name, baseUrl] of Object.entries(searchUrls)) {
-                            const link = document.createElement('a');
-                            // Construct the full URL using the base and potential suffix
-                            const fullUrl = baseUrl + encodedTitle + (urlSuffixes[name] || '');
+                        // Only create links for sites in the sitesWithIndividualLinks array
+                        for (const siteName of sitesWithIndividualLinks) {
+                            const baseUrl = searchUrls[siteName];
+                            if (baseUrl) { // Ensure the site name exists in searchUrls
+                                const link = document.createElement('a');
+                                // Construct the full URL using the base, encoded title, and language parameter if applicable
+                                const languageParam = urlModifiers[siteName] ? urlModifiers[siteName](encodedTitle, selectedLanguage) : '';
+                                const fullUrl = baseUrl + encodedTitle + languageParam;
 
-                            link.href = fullUrl;
-                            link.textContent = `[${name}]`; // Text inside the button
-                            link.target = '_blank'; // Open link in a new tab
-                             // Add a data attribute to identify the site for copying
-                            link.dataset.site = name;
-                             // Add class for general link styling
-                            link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
+                                link.href = fullUrl;
+                                link.textContent = `[${siteName}]`; // Text inside the button
+                                link.target = '_blank'; // Open link in a new tab
+                                 // Add a data attribute to identify the site for copying
+                                link.dataset.site = siteName;
+                                 // Add class for general link styling
+                                link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
 
-                            linksDiv.appendChild(link);
+                                linksDiv.appendChild(link);
+                            }
                         }
 
                         bookResultItem.appendChild(linksDiv);
@@ -548,6 +632,7 @@ The Martian Chronicles
                 });
 
                 // Generate copy buttons after generating results
+                 // Iterate through ALL site names from the searchUrls object
                  for (const siteName of Object.keys(searchUrls)) {
                      const copyButton = document.createElement('button');
                      copyButton.classList.add('copy-button');
@@ -558,11 +643,16 @@ The Martian Chronicles
                          const siteToCopy = copyButton.dataset.site;
                          const urlsToCopy = [];
                          const bookItems = resultsDiv.querySelectorAll('.book-result-item');
+                         const currentLanguage = languageSelect.value; // Get the current language for copying
 
                          bookItems.forEach(item => {
-                             const link = item.querySelector(`.search-links a[data-site="${siteToCopy}"]`);
-                             if (link && link.href) {
-                                 urlsToCopy.push(link.href);
+                             const encodedTitleForCopy = encodeURIComponent(item.querySelector('.book-title').textContent.trim());
+                             const baseUrl = searchUrls[siteToCopy];
+                             if (baseUrl) {
+                                  // Construct the full URL for copying, including language parameter if applicable
+                                 const languageParam = urlModifiers[siteToCopy] ? urlModifiers[siteToCopy](encodedTitleForCopy, currentLanguage) : '';
+                                 const fullUrl = baseUrl + encodedTitleForCopy + languageParam;
+                                 urlsToCopy.push(fullUrl);
                              }
                          });
 
