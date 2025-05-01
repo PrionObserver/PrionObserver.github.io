@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quinn Kinata - Book Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Deep Navy background - used as fallback/base */
+            background-color: #1a2634;
+            color: #e0e6ed; /* Off-White/Light Gray default text */
+            line-height: 1.6; /* Improved readability */
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default body padding */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            position: relative; /* Needed for absolute positioning of canvas */
+            min-height: 100vh; /* Ensure body covers at least the viewport height */
+
+            /* Fractal Background Image (Reverted) */
+            /* Replace 'YOUR_FRACTAL_IMAGE_URL.jpg' with the URL of your fractal image */
+            background-image: url('https://placehold.co/1a2634/e0e6ed'); /* Placeholder: solid color background */
+            background-repeat: repeat; /* Repeat the image to cover the background */
+            background-size: auto; /* Adjust as needed, 'cover' or 'contain' might also work depending on the image */
+            background-attachment: fixed; /* Keep the background fixed while scrolling */
+        }
+
+        /* Adjust text color for specific elements */
+        h1, h2 {
+            color: #ffffff; /* White color for headings */
+            font-weight: 700; /* Ensure headings are bold */
+        }
+
+        /* Link colors */
+        a {
+            color: #5ac8fa; /* Bright Sky Blue */
+            text-decoration: none; /* Remove default underline */
+            transition: color 0.3s ease; /* Smooth color transition */
+        }
+        a:hover {
+            color: #89d0f8; /* Lighter blue on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+         /* Footer text color */
+         footer p {
+            color: #9ba3af; /* Medium Gray for footer text */
+         }
+
+         /* Apply a semi-transparent background to sections without section-bg-dark */
+         section {
+             background-color: rgba(10, 15, 20, 0.98); /* Even darker background */
+         }
+
+        /* --- Book Search Specific Styles --- */
+        #book-search-section {
+            padding: 30px 0;
+        }
+
+        #book-search-section h2 {
+            color: #ffffff;
+            border-bottom: 2px solid #da70d6; /* Orchid underline */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #book-titles-textarea {
+            background-color: #2d3a4b; /* Darker input background */
+            color: #e0e6ed;
+            border: 1px solid #4a5568; /* Subtle border */
+            border-radius: 6px;
+            padding: 10px;
+            width: 100%; /* Make it full width */
+            min-height: 400px; /* Increased height for massive list */
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        #generate-links-button {
+            background-color: #5ac8fa; /* Bright Sky Blue */
+            color: #1a2634; /* Dark text */
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none; /* Remove default button border */
+        }
+
+        #generate-links-button:hover {
+            background-color: #89d0f8; /* Lighter blue on hover */
+        }
+
+        #search-results {
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
+            padding-top: 20px;
+        }
+
+        /* Style for each individual book result item */
+        .book-result-item {
+            display: flex; /* Use flexbox for layout */
+            justify-content: space-between; /* Space out content */
+            align-items: flex-start; /* Align items to the top */
+            padding: 8px 0; /* Reduced padding */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05); /* Subtle separator */
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+
+        .book-result-item:last-child {
+            border-bottom: none; /* No border on the last item */
+        }
+
+        .book-title {
+            color: #e0e6ed; /* Off-White for titles */
+            font-weight: 600; /* Slightly less bold than h2/h1 */
+            flex-grow: 1; /* Allow title to grow */
+            margin-right: 10px; /* Space between title and links */
+            flex-basis: 60%; /* Give title more space initially */
+            min-width: 150px; /* Ensure title has a minimum width before wrapping */
+        }
+
+
+        /* Style for the container of link buttons */
+        .search-links {
+            flex-shrink: 0; /* Prevent links from shrinking */
+            display: flex; /* Use flexbox for links */
+            gap: 4px; /* Reduced space between link buttons */
+            align-items: center; /* Vertically align link buttons */
+             margin-top: 2px; /* Small margin to align better if details wrap */
+             flex-wrap: nowrap; /* Prevent links themselves from wrapping onto multiple lines */
+        }
+
+        /* Style for the individual link buttons */
+        .search-links a {
+            color: #a0ced9; /* Lighter blue text */
+            font-size: 0.7em; /* Smaller font */
+            text-decoration: none; /* No underline */
+            padding: 2px 6px; /* Reduced padding for smaller buttons */
+            border: 1px solid rgba(160, 206, 217, 0.3); /* Subtle border */
+            border-radius: 4px; /* Rounded corners */
+            margin-right: 4px; /* Reduced space between buttons */
+            display: inline-block; /* Allow padding and margin */
+            transition: all 0.2s ease;
+        }
+
+        .search-links a:last-child {
+            margin-right: 0; /* No margin on the last button */
+        }
+
+        .search-links a:hover {
+            background-color: rgba(160, 206, 217, 0.1); /* Subtle background on hover */
+            border-color: #a0ced9;
+            color: #ffffff; /* White text on hover */
+        }
+
+        /* Style for the divider line - Made more distinct */
+        .divider {
+            border: none;
+            height: 2px; /* Thicker line */
+            background: linear-gradient(to right, rgba(218, 112, 214, 0.5), rgba(90, 200, 250, 0.5)); /* Gradient color */
+            margin: 30px 0; /* More space above and below */
+            width: 100%; /* Full width */
+            border-radius: 1px; /* Slightly rounded ends */
+        }
+
+         /* Style for the category heading after a divider */
+         .category-heading {
+             color: #da70d6; /* Orchid color for category titles */
+             margin-top: 10px; /* Space below the divider */
+             margin-bottom: 15px; /* Space above the first book in the category */
+             font-size: 1.2em; /* Slightly larger font */
+             font-weight: 600;
+         }
+
+
+         /* Styles for the footer navigation links */
+        .footer-nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between links */
+            margin-top: 10px; /* Space above links */
+        }
+
+        .footer-nav-links a {
+             color: #9ba3af; /* Match footer text color */
+             text-decoration: none;
+             transition: color 0.3s ease;
+        }
+
+         .footer-nav-links a:hover {
+             color: #e0e6ed; /* Lighter on hover */
+             text-decoration: underline;
+         }
+
+
+    </style>
+</head>
+<body>
+
+    <section id="book-search-section" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl text-center mb-8">Book Search Link Generator</h2>
+            <p class="text-center text-gray-400 mb-8">Paste book titles below, one per line, and click "Generate Links" to get search links for each. Use lines starting with "---" to create dividers in the results.</p>
+
+            <textarea id="book-titles-textarea" placeholder="Paste book titles here, one per line...">--- Technical Books ---
+Introduction to Plasma Physics and Controlled Fusion
+Fundamentals of Plasma Physics
+Physics of Fully Ionized Plasmas
+Plasma Physics and Fusion Energy
+Controlled Fusion and Plasma Physics: A Tutorial
+Fusion Plasma Physics
+High-Voltage Engineering Fundamentals
+Pulsed Power Systems: Principles and Applications
+Fundamentals of High Power Pulsed Nanoelectronics
+The Physics and Technology of Particle and Photon Beams
+High-Power Pulsed Spindt-Type Cold Cathodes
+Power Electronics: Converters, Applications, and Design
+Fundamentals of Power Electronics
+High-Voltage Engineering: Theory and Practice
+Principles of Pulse Power Techniques
+Scientific Foundations of Vacuum Technique
+Vacuum Technology: An Introduction
+Handbook of Vacuum Science and Technology
+Foundations of Vacuum Science and Technology
+Vacuum Practice
+Materials Science and Engineering: An Introduction
+Physical Metallurgy Principles
+The Structure and Properties of Materials
+Materials Science for Engineers
+Physical Metallurgy and Advanced Materials
+Introduction to Health Physics
+Radiation Detection and Measurement
+The Health Physics and Radiological Health Handbook
+Machinery's Handbook
+Machine Tool Practices
+Sheet Metal Handbook
+Welding Handbook (Any Edition)
+The Art of Electronics
+Principles of Electric Circuits: Conventional Current Version
+Practical Electronics for Inventors
+Foundations of Analog and Digital Electronic Circuits
+Microelectronic Circuits
+Circuit Analysis For Dummies
+Shigley's Mechanical Engineering Design
+Fundamentals of Machine Component Design
+Marks' Standard Handbook for Mechanical Engineers
+Clean Code: A Handbook of Agile Software Craftsmanship
+Structure and Interpretation of Computer Programs
+Numerical Recipes (Any Edition/Language)
+The Art of Computer Programming (Volumes 1-4A)
+The Visual Display of Quantitative Information
+Visualization Analysis and Design
+Interactive Data Visualization for the Web
+NFPA 70E: Standard for Electrical Safety in the Workplace
+ISO 9001: Quality management systems — Requirements
+ANSI Y32.2 / IEEE 315: Graphic Symbols for Electrical and Electronics Diagrams
+ANSI B4.1: Preferred Limits and Fits for Cylindrical Parts
+OSHA 1910 Subpart S: Electrical
+
+--- General Knowledge & Other Fields ---
+A Short History of Nearly Everything
+Sapiens: A Brief History of Humankind
+Factfulness: Ten Reasons We're Wrong About the World—and Why Things Are Better Than You Think
+How to Win Friends & Influence People
+Talk Like TED: The 9 Public-Speaking Secrets of the World's Top Minds
+Crucial Conversations: Tools for Talking When Stakes Are High
+
+--- History ---
+Guns, Germs, and Steel: The Fates of Human Societies
+A History of Warfare
+The Rise and Fall of the Great Powers: Economic Change and Military Conflict from 1500 to 2000
+
+--- Science (General) ---
+Cosmos
+A Brief History of Time
+The Selfish Gene
+
+--- Learning & Memory ---
+Make It Stick: The Science of Successful Learning
+Ultralearning: Master Hard Skills, Outsmart the Competition, and Accelerate Your Career
+A Mind for Numbers: How to Excel at Math and Science (Even If You Flunked Algebra)
+
+--- Neuroscience ---
+Principles of Neural Science
+The Man Who Mistook His Wife for a Hat and Other Clinical Tales
+Incognito: The Secret Lives of the Brain
+
+--- Cognition ---
+Thinking, Fast and Slow
+How the Mind Works
+The Blank Slate: The Modern Denial of Human Nature
+
+--- Mathematics ---
+Calculus (Any Standard Textbook, e.g., Stewart, Thomas, Adams)
+Linear Algebra and Its Applications
+Differential Equations and Linear Algebra
+Probability and Statistics for Engineering and the Sciences
+
+--- Popular Sci-Fi Books ---
+Frankenstein
+Nineteen Eighty-Four
+Brave New World
+The Time Machine
+The Hitchhiker's Guide to the Galaxy
+Dune
+Foundation (Series)
+Snow Crash
+Neuromancer
+Hyperion (Cantos)
+The Martian
+Contact
+Do Androids Dream of Electric Sheep?
+The Left Hand of Darkness
+Ender's Game
+Fahrenheit 451
+Slaughterhouse-Five
+2001: A Space Odyssey
+The War of the Worlds
+A Canticle for Leibowitz
+Stranger in a Strange Land
+The Three-Body Problem (Remembrance of Earth's Past #1)
+Ancillary Justice (Imperial Radch #1)
+Project Hail Mary
+The Calculating Stars (Lady Astronaut #1)
+A Memory Called Empire (Teixcalaan #1)
+Network Effect (Murderbot Diaries #5)
+Piranesi
+Leviathan Wakes (The Expanse #1)
+Annihilation (Southern Reach #1)
+The Martian Chronicles
+</textarea>
+
+            <div class="text-center mt-6">
+                <button id="generate-links-button">Generate Links</button>
+            </div>
+
+            <div id="search-results">
+                </div>
+        </div>
+    </section>
+
+    <footer class="section-bg-dark text-gray-500 py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a> <a href="https://www.youtube.com/@EdwinHwu" target="_blank">🧪</a> <a href="https://www.youtube.com/watch?v=rJPKTCdk-WI" target="_blank">🔬</a></p>
+             <div class="footer-nav-links">
+                 <a href="index.html">Portfolio Home</a>
+                 <a href="reading_list.html">Mega Reading List</a>
+                 <a href="study_plan.html">Study Plan</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('book-titles-textarea');
+            const button = document.getElementById('generate-links-button');
+            const resultsDiv = document.getElementById('search-results');
+
+            button.addEventListener('click', () => {
+                const lines = textarea.value.split('\n').map(line => line.trim()); // Get all lines, trim whitespace
+
+                resultsDiv.innerHTML = ''; // Clear previous results
+
+                if (lines.filter(line => line.length > 0 && !line.startsWith('---')).length === 0) {
+                     resultsDiv.innerHTML = '<p class="text-center text-gray-400">Please enter book titles in the text area above.</p>';
+                     return;
+                 }
+
+
+                lines.forEach(line => {
+                    if (line.startsWith('---')) {
+                        // If the line starts with '---', create a divider and heading
+                        const divider = document.createElement('hr');
+                        divider.classList.add('divider'); // Apply divider styling
+                        resultsDiv.appendChild(divider);
+
+                         const dividerText = line.substring(3).trim(); // Remove '---' and trim
+                         if (dividerText.length > 0) {
+                             const heading = document.createElement('h3'); // Use h3 for category titles
+                             heading.classList.add('category-heading'); // Apply new category heading styling
+                             heading.textContent = dividerText;
+                             resultsDiv.appendChild(heading);
+                         }
+
+
+                    } else if (line.length > 0) {
+                        // If it's not a divider and not empty, treat as a book title
+                        const title = line;
+                        const encodedTitle = encodeURIComponent(title);
+
+                        // Define the base URLs for different search engines/archives
+                        const searchUrls = {
+                            'Scholar': `https://scholar.google.com/scholar?q=${encodedTitle}`,
+                            'Archive': `https://archive.org/search?query=${encodedTitle}`,
+                            "Anna's": `https://annas-archive.org/search?q=${encodedTitle}`,
+                            'LibGen': `http://libgen.rs/search.php?req=${encodedTitle}&lg_topic=libgen&open=0&res=25&view=simple&phrase=1&column=def`,
+                            'Sci-Hub': `https://sci-hub.st/https://scholar.google.com/scholar?q=${encodedTitle}`, // Sci-Hub often works best with a Scholar URL
+                            'Audio': `https://archive.org/search?query=${encodedTitle}&and%5B%5D=mediatype%3A%22audio%22`, // Search specifically for audiobooks on Archive.org with mediatype filter
+                            'eBay': `https://www.ebay.com/sch/i.html?_nkw=${encodedTitle}&_sop=15` // eBay search, sorted by lowest price (_sop=15)
+                        };
+
+                        // Create HTML elements for the book title and its links
+                        const bookResultItem = document.createElement('div');
+                        bookResultItem.classList.add('book-result-item'); // Use the new class
+
+                        const titleElement = document.createElement('span'); // Changed to span for inline flex
+                        titleElement.classList.add('book-title'); // Apply book title styling
+                        titleElement.textContent = title;
+                        bookResultItem.appendChild(titleElement);
+
+                        const linksDiv = document.createElement('div');
+                        linksDiv.classList.add('search-links'); // Apply class for styling
+
+                        // Create and append the links as styled buttons
+                        for (const [name, url] of Object.entries(searchUrls)) {
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.textContent = `[${name}]`; // Text inside the button
+                            link.target = '_blank'; // Open link in a new tab
+                            // Tailwind classes for button-like appearance (adapted from Mega Reading List)
+                            link.classList.add('text-sm', 'text-a0ced9', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'border-a0ced9', 'border-opacity-30', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'hover:bg-a0ced9', 'hover:bg-opacity-10', 'mr-1'); // Reduced mr-1 for less space
+
+                            linksDiv.appendChild(link);
+                        }
+
+                        bookResultItem.appendChild(linksDiv);
+                        resultsDiv.appendChild(bookResultItem);
+                    }
+                    // Ignore empty lines that don't start with '---'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
