@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quinn Kinata - Media & Technical Resource Search Link Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Deep Navy background - used as fallback/base */
+            background-color: #1a2634;
+            color: #e0e6ed; /* Off-White/Light Gray default text */
+            line-height: 1.6; /* Improved readability */
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default body padding */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            position: relative; /* Needed for absolute positioning of canvas */
+            min-height: 100vh; /* Ensure body covers at least the viewport height */
+
+            /* Fractal Background Image (Reverted) */
+            /* Replace 'YOUR_FRACTAL_IMAGE_URL.jpg' with the URL of your fractal image */
+            background-image: url('https://placehold.co/1a2634/e0e6ed'); /* Placeholder: solid color background */
+            background-repeat: repeat; /* Repeat the image to cover the background */
+            background-size: auto; /* Adjust as needed, 'cover' or 'contain' might also work depending on the image */
+            background-attachment: fixed; /* Keep the background fixed while scrolling */
+        }
+
+        /* Adjust text color for specific elements */
+        h1, h2 {
+            color: #ffffff; /* White color for headings */
+            font-weight: 700; /* Ensure headings are bold */
+        }
+
+        /* Link colors */
+        a {
+            color: #5ac8fa; /* Bright Sky Blue */
+            text-decoration: none; /* Remove default underline */
+            transition: color 0.3s ease; /* Smooth color transition */
+        }
+        a:hover {
+            color: #89d0f8; /* Lighter blue on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+         /* Footer text color */
+         footer p {
+            color: #9ba3af; /* Medium Gray for footer text */
+         }
+
+         /* Apply a semi-transparent background to sections without section-bg-dark */
+         section {
+             background-color: rgba(10, 15, 20, 0.98); /* Even darker background */
+         }
+
+        /* --- Resource Search Specific Styles --- */
+        #resource-search-section {
+            padding: 30px 0;
+        }
+
+        #resource-search-section h2 {
+            color: #ffffff;
+            border-bottom: 2px solid #da70d6; /* Orchid underline */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+         #resource-description {
+             text-align: center;
+             color: #9ba3af;
+             margin-bottom: 20px;
+         }
+
+         #resource-guide {
+             background-color: #2d3a4b;
+             padding: 15px;
+             border-radius: 8px;
+             margin-bottom: 30px;
+             color: #e0e6ed;
+             font-size: 0.9em;
+         }
+
+         #resource-guide h3 {
+             color: #ffffff;
+             margin-top: 0;
+             margin-bottom: 10px;
+             font-weight: 600;
+         }
+
+         #resource-guide ul {
+             list-style: disc;
+             padding-left: 20px;
+         }
+
+         #resource-guide li {
+             margin-bottom: 5px;
+         }
+
+
+        #resource-titles-textarea {
+            background-color: #2d3a4b; /* Darker input background */
+            color: #e0e6ed;
+            border: 1px solid #4a5568; /* Subtle border */
+            border-radius: 6px;
+            padding: 10px;
+            width: 100%; /* Make it full width */
+            min-height: 400px; /* Increased height for massive list */
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        /* Button and Filter Grouping Styles */
+        /* Adjusted spacing and flex behavior for better layout */
+        .control-group {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: center; /* Center items in the group */
+            align-items: center;
+            gap: 16px; /* Increased gap between items */
+            margin-bottom: 24px; /* Increased space between groups */
+            padding: 12px; /* Add some padding around the group */
+            background-color: rgba(45, 58, 75, 0.5); /* Slightly lighter background for groups */
+            border-radius: 8px; /* Rounded corners for groups */
+            border: 1px solid rgba(74, 85, 104, 0.3); /* Subtle border for groups */
+        }
+
+         /* Specific adjustments for filter group on small screens */
+         .filter-group {
+             justify-content: flex-start; /* Align filters to the start on small screens */
+         }
+
+         .filter-item {
+             display: flex;
+             align-items: center;
+             gap: 6px; /* Space between label and input */
+         }
+
+         /* Style for labels */
+         .filter-label {
+             color: #e0e6ed;
+             font-size: 0.9em;
+             /* Removed margin-right as gap handles spacing */
+         }
+
+
+        /* Style for the main Generate Button */
+        #generate-links-button {
+            background-color: #5ac8fa; /* Bright Sky Blue */
+            color: #1a2634; /* Dark text */
+            font-weight: 600;
+            padding: 12px 24px; /* Increased padding */
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none; /* Remove default button border */
+        }
+
+        #generate-links-button:hover {
+            background-color: #89d0f8; /* Lighter blue on hover */
+        }
+
+        /* Style for the filter dropdowns and manual input */
+        .filter-select, .filter-input {
+            background-color: #2d3a4b; /* Match textarea background */
+            color: #e0e6ed; /* Match text color */
+            border: 1px solid #4a5568; /* Subtle border */
+            border-radius: 6px;
+            padding: 8px 10px; /* Adjusted padding */
+            font-size: 1rem; /* Match button font size */
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+         .filter-input {
+             cursor: text; /* Change cursor for text input */
+         }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #5ac8fa; /* Highlight on focus */
+        }
+
+         /* Style for the checkbox */
+         .filter-checkbox {
+             margin-left: 0; /* Remove margin, gap handles spacing */
+             margin-right: 0; /* Remove margin, gap handles spacing */
+             cursor: pointer;
+         }
+
+
+        /* Style for the Specialized Search Buttons */
+        .specialized-button {
+             font-weight: 600;
+             padding: 12px 24px; /* Increased padding */
+             border-radius: 6px;
+             cursor: pointer;
+             transition: background-color 0.3s ease;
+             border: none; /* Remove default button border */
+        }
+
+        #advanced-google-button {
+             background-color: #f4b400; /* Google Yellow */
+             color: #1a2634; /* Dark text */
+        }
+
+         #advanced-google-button:hover {
+             background-color: #ffc72c; /* Lighter yellow on hover */
+         }
+
+         #jedec-button {
+             background-color: #007acc; /* Microsoft Azure Blue (common for tech) */
+             color: #ffffff; /* White text */
+         }
+
+         #jedec-button:hover {
+             background-color: #005f99; /* Darker blue on hover */
+         }
+
+
+         /* Style for the toggle buttons */
+         .toggle-button {
+            background-color: #da70d6; /* Orchid */
+            color: #1a2634; /* Dark text */
+            font-weight: 600;
+            padding: 10px 20px; /* Adjusted padding */
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none; /* Remove default button border */
+         }
+
+         .toggle-button:hover {
+             background-color: #e093e0; /* Lighter orchid on hover */
+         }
+
+
+        #copy-buttons-area {
+            margin-top: 20px; /* Space below generate button */
+            text-align: center;
+            padding-bottom: 20px; /* Space before results start */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator line above results */
+        }
+
+        #copy-buttons-area p {
+            color: #9ba3af; /* Match footer text color */
+            font-size: 0.9em;
+            margin-bottom: 10px; /* Space below the text */
+        }
+
+        #copy-buttons-container {
+            display: flex; /* Use flexbox to arrange buttons */
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            justify-content: center; /* Center the buttons */
+            gap: 8px; /* Adjusted space between copy buttons */
+        }
+
+        .copy-button {
+             /* Base styling */
+             color: #e0e6ed; /* White text */
+             font-size: 0.8em; /* Slightly larger font size */
+             padding: 5px 10px; /* Adjusted padding */
+             border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+             border-radius: 4px;
+             cursor: pointer;
+             transition: all 0.2s ease;
+             white-space: nowrap; /* Prevent button text from wrapping */
+             font-weight: 500; /* Medium font weight */
+             text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for readability */
+        }
+
+        /* Specific colors for copy buttons */
+        .copy-button[data-site="Scholar"] { background-color: rgba(100, 149, 237, 0.3); border-color: rgba(100, 149, 237, 0.5); } /* Cornflower Blue */
+        .copy-button[data-site="Archive"] { background-color: rgba(135, 206, 235, 0.3); border-color: rgba(135, 206, 235, 0.5); } /* Sky Blue */
+        .copy-button[data-site="Anna's"] { background-color: rgba(218, 112, 214, 0.3); border-color: rgba(218, 112, 214, 0.5); } /* Orchid */
+        .copy-button[data-site="LibGen"] { background-color: rgba(144, 238, 144, 0.3); border-color: rgba(144, 238, 144, 0.5); } /* Light Green */
+        .copy-button[data-site="Sci-Hub"] { background-color: rgba(255, 99, 71, 0.3); border-color: rgba(255, 99, 71, 0.5); } /* Tomato */
+        .copy-button[data-site="eBay"] { background-color: rgba(255, 215, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); } /* Gold */
+        .copy-button[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
+        .copy-button[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
+        .copy-button[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
+        .copy-button[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
+        .copy-button[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
+        .copy-button[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
+        .copy-button[data-site="BookBub"] { background-color: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); } /* Red */
+        .copy-button[data-site="Google Books"] { background-color: rgba(128, 128, 128, 0.3); border-color: rgba(128, 128, 128, 0.5); } /* Gray */
+        .copy-button[data-site="Facebook Marketplace"] { background-color: rgba(66, 103, 178, 0.3); border-color: rgba(66, 103, 178, 0.5); } /* Facebook Blue */
+        .copy-button[data-site="Craigslist"] { background-color: rgba(138, 183, 61, 0.3); border-color: rgba(138, 183, 61, 0.5); } /* Craigslist Green */
+        .copy-button[data-site="Advanced Google Search"] { background-color: rgba(244, 180, 0, 0.3); border-color: rgba(244, 180, 0, 0.5); } /* Google Yellow */
+        .copy-button[data-site="JEDEC Standards"] { background-color: rgba(0, 122, 204, 0.3); border-color: rgba(0, 122, 204, 0.5); } /* Azure Blue */
+        .copy-button[data-site="IEEE Xplore"] { background-color: rgba(0, 102, 153, 0.3); border-color: rgba(0, 102, 153, 0.5); } /* IEEE Blue */
+        .copy-button[data-site="ACM Digital Library"] { background-color: rgba(0, 170, 170, 0.3); border-color: rgba(0, 170, 170, 0.5); } /* ACM Teal */
+        .copy-button[data-site="ScienceDirect"] { background-color: rgba(255, 102, 0, 0.3); border-color: rgba(255, 102, 0, 0.5); } /* Elsevier Orange */
+        .copy-button[data-site="SpringerLink"] { background-color: rgba(60, 179, 113, 0.3); border-color: rgba(60, 179, 113, 0.5); } /* MediumSeaGreen */
+        .copy-button[data-site="ArXiv"] { background-color: rgba(180, 40, 45, 0.3); border-color: rgba(180, 40, 45, 0.5); } /* ArXiv Red */
+        .copy-button[data-site="Google Patents"] { background-color: rgba(169, 169, 169, 0.3); border-color: rgba(169, 169, 169, 0.5); } /* DarkGray */
+        .copy-button[data-site="USPTO Search"] { background-color: rgba(0, 51, 102, 0.3); border-color: rgba(0, 51, 102, 0.5); } /* Dark Blue */
+        .copy-button[data-site="EPO Search"] { background-color: rgba(255, 140, 0, 0.3); border-color: rgba(255, 140, 0, 0.5); } /* DarkOrange */
+        .copy-button[data-site="GitHub Search"] { background-color: rgba(27, 31, 35, 0.3); border-color: rgba(27, 31, 35, 0.5); } /* GitHub Black */
+        .copy-button[data-site="GitLab Search"] { background-color: rgba(252, 109, 38, 0.3); border-color: rgba(252, 109, 38, 0.5); } /* GitLab Orange */
+        .copy-button[data-site="Stack Overflow"] { background-color: rgba(244, 128, 36, 0.3); border-color: rgba(244, 128, 36, 0.5); } /* Stack Overflow Orange */
+
+
+        .copy-button:hover {
+             background-color: rgba(160, 206, 217, 0.2); /* Darker background on hover */
+             border-color: #a0ced9;
+             color: #ffffff; /* White text on hover */
+        }
+
+         .copy-button:active {
+             background-color: rgba(160, 206, 217, 0.3); /* Even darker when clicked */
+         }
+
+
+        #search-results {
+            margin-top: 0; /* Remove top margin as border is in container above */
+            padding-top: 20px; /* Padding from the separator line */
+        }
+
+        /* Style for each individual resource result item */
+        .resource-result-item {
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack title and links vertically */
+            align-items: flex-start; /* Align items to the start (left) */
+            padding: 6px 0; /* Reduced padding */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05); /* Subtle separator */
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+
+        .resource-result-item:last-child {
+            border-bottom: none; /* No border on the last item */
+        }
+
+        .resource-title {
+            color: #e0e6ed; /* Off-White for titles */
+            font-weight: 600; /* Slightly less bold than h2/h1 */
+            margin-right: 0; /* Remove right margin */
+            margin-bottom: 5px; /* Add space below the title */
+            flex-basis: auto; /* Allow flexbox to determine initial width */
+            min-width: auto; /* Remove min-width constraint */
+             text-align: left; /* Ensure text is left-aligned */
+             width: 100%; /* Allow title to take full width */
+        }
+
+
+        /* Style for the container of link buttons */
+        .search-links {
+            flex-shrink: 0; /* Prevent links from shrinking */
+            display: flex; /* Use flexbox for links */
+            gap: 3px; /* Further reduced space between link buttons */
+            align-items: center; /* Vertically align link buttons */
+            margin-top: 0; /* Remove top margin */
+            flex-wrap: wrap; /* Allow buttons to wrap if needed */
+            justify-content: flex-start; /* Align buttons to the left */
+            width: 100%; /* Allow links container to take full width */
+        }
+
+        /* Style for the individual link buttons - Apply colors here */
+        .search-links a {
+            color: #e0e6ed; /* White text for links */
+            font-size: 0.65em; /* Even smaller font */
+            text-decoration: none; /* No underline */
+            padding: 1px 5px; /* Reduced padding for smaller buttons */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+            border-radius: 4px; /* Rounded corners */
+            margin-right: 3px; /* Reduced space between buttons */
+            display: inline-block; /* Allow padding and margin */
+            transition: all 0.2s ease;
+            white-space: nowrap; /* Prevent button text from wrapping */
+            font-weight: 500; /* Medium font weight */
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for readability */
+        }
+
+         /* Specific colors for search link buttons - Matching copy buttons */
+        .search-links a[data-site="Scholar"] { background-color: rgba(100, 149, 237, 0.3); border-color: rgba(100, 149, 237, 0.5); } /* Cornflower Blue */
+        .search-links a[data-site="Archive"] { background-color: rgba(135, 206, 235, 0.3); border-color: rgba(135, 206, 235, 0.5); } /* Sky Blue */
+        .search-links a[data-site="Anna's"] { background-color: rgba(218, 112, 214, 0.3); border-color: rgba(218, 112, 214, 0.5); } /* Orchid */
+        .search-links a[data-site="LibGen"] { background-color: rgba(144, 238, 144, 0.3); border-color: rgba(144, 238, 144, 0.5); } /* Light Green */
+        .search-links a[data-site="Sci-Hub"] { background-color: rgba(255, 99, 71, 0.3); border-color: rgba(255, 99, 71, 0.5); } /* Tomato */
+        .search-links a[data-site="eBay"] { background-color: rgba(255, 215, 0, 0.3); border-color: rgba(255, 215, 0, 0.5); } /* Gold */
+        .search-links a[data-site="Amazon"] { background-color: rgba(255, 165, 0, 0.3); border-color: rgba(255, 165, 0, 0.5); } /* Orange */
+        .search-links a[data-site="Audible"] { background-color: rgba(148, 0, 211, 0.3); border-color: rgba(148, 0, 211, 0.5); } /* Dark Violet */
+        .search-links a[data-site="LibriVox"] { background-color: rgba(50, 205, 50, 0.3); border-color: rgba(50, 205, 50, 0.5); } /* Lime Green */
+        /* Note: These colors are defined but links won't be generated individually for these sites */
+        .search-links a[data-site="Project Gutenberg"] { background-color: rgba(0, 191, 255, 0.3); border-color: rgba(0, 191, 255, 0.5); } /* Deep Sky Blue */
+        .search-links a[data-site="Open Library"] { background-color: rgba(64, 224, 208, 0.3); border-color: rgba(64, 224, 208, 0.5); } /* Turquoise */
+        .search-links a[data-site="ManyBooks"] { background-color: rgba(139, 69, 19, 0.3); border-color: rgba(139, 69, 19, 0.5); } /* SaddleBrown */
+        .search-links a[data-site="BookBub"] { background-color: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); } /* Red */
+        .search-links a[data-site="Google Books"] { background-color: rgba(128, 128, 128, 0.3); border-color: rgba(128, 128, 128, 0.5); } /* Gray */
+        .search-links a[data-site="Facebook Marketplace"] { background-color: rgba(66, 103, 178, 0.3); border-color: rgba(66, 103, 178, 0.5); } /* Facebook Blue */
+        .search-links a[data-site="Craigslist"] { background-color: rgba(138, 183, 61, 0.3); border-color: rgba(138, 183, 61, 0.5); } /* Craigslist Green */
+        .search-links a[data-site="Advanced Google Search"] { background-color: rgba(244, 180, 0, 0.3); border-color: rgba(244, 180, 0, 0.5); } /* Google Yellow */
+        .search-links a[data-site="JEDEC Standards"] { background-color: rgba(0, 122, 204, 0.3); border-color: rgba(0, 122, 204, 0.5); } /* Azure Blue */
+        .search-links a[data-site="IEEE Xplore"] { background-color: rgba(0, 102, 153, 0.3); border-color: rgba(0, 102, 153, 0.5); } /* IEEE Blue */
+        .search-links a[data-site="ACM Digital Library"] { background-color: rgba(0, 170, 170, 0.3); border-color: rgba(0, 170, 170, 0.5); } /* ACM Teal */
+        .search-links a[data-site="ScienceDirect"] { background-color: rgba(255, 102, 0, 0.3); border-color: rgba(255, 102, 0, 0.5); } /* Elsevier Orange */
+        .search-links a[data-site="SpringerLink"] { background-color: rgba(60, 179, 113, 0.3); border-color: rgba(60, 179, 113, 0.5); } /* MediumSeaGreen */
+        .search-links a[data-site="ArXiv"] { background-color: rgba(180, 40, 45, 0.3); border-color: rgba(180, 40, 45, 0.5); } /* ArXiv Red */
+        .search-links a[data-site="Google Patents"] { background-color: rgba(169, 169, 169, 0.3); border-color: rgba(169, 169, 169, 0.5); } /* DarkGray */
+        .search-links a[data-site="USPTO Search"] { background-color: rgba(0, 51, 102, 0.3); border-color: rgba(0, 51, 102, 0.5); } /* Dark Blue */
+        .search-links a[data-site="EPO Search"] { background-color: rgba(255, 140, 0, 0.3); border-color: rgba(255, 140, 0, 0.5); } /* DarkOrange */
+        .search-links a[data-site="GitHub Search"] { background-color: rgba(27, 31, 35, 0.3); border-color: rgba(27, 31, 35, 0.5); } /* GitHub Black */
+        .search-links a[data-site="GitLab Search"] { background-color: rgba(252, 109, 38, 0.3); border-color: rgba(252, 109, 38, 0.5); } /* GitLab Orange */
+        .search-links a[data-site="Stack Overflow"] { background-color: rgba(244, 128, 36, 0.3); border-color: rgba(244, 128, 36, 0.5); } /* Stack Overflow Orange */
+
+
+        .search-links a:hover {
+             background-color: rgba(160, 206, 217, 0.2); /* Darker background on hover */
+             border-color: #a0ced9;
+             color: #ffffff; /* White text on hover */
+        }
+
+         .search-links a:active {
+             background-color: rgba(160, 206, 217, 0.3); /* Even darker when clicked */
+         }
+
+
+        /* Style for the divider line - Made more distinct */
+        .divider {
+            border: none;
+            height: 2px; /* Thicker line */
+            background: linear-gradient(to right, rgba(218, 112, 214, 0.5), rgba(90, 200, 250, 0.5)); /* Gradient color */
+            margin: 30px 0 15px 0; /* More space above, less below */
+            width: 100%; /* Full width */
+            border-radius: 1px; /* Slightly rounded ends */
+        }
+
+         /* Style for the category heading after a divider */
+         .category-heading {
+             color: #da70d6; /* Orchid color for category titles */
+             margin-top: 10px; /* Space below the divider */
+             margin-bottom: 15px; /* Space above the first book in the category */
+             font-size: 1.2em; /* Slightly larger font */
+             font-weight: 600;
+         }
+
+
+         /* Styles for the footer navigation links */
+        .footer-nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between links */
+            margin-top: 10px; /* Space above links */
+        }
+
+        .footer-nav-links a {
+             color: #9ba3af; /* Match footer text color */
+             text-decoration: none;
+             transition: color 0.3s ease;
+        }
+
+         .footer-nav-links a:hover {
+             color: #e0e6ed; /* Lighter on hover */
+             text-decoration: underline;
+         }
+
+
+    </style>
+</head>
+<body>
+
+    <section id="resource-search-section" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl text-center mb-8">Media & Technical Resource Search Link Generator</h2>
+             <p id="resource-description">Generate search links for a wide range of media (books, audio, etc.) and technical resources (papers, standards, patents, code) across various online platforms, including digital libraries, marketplaces, academic databases, and code repositories.</p>
+
+             <div id="resource-guide">
+                 <h3>How to Use:</h3>
+                 <ul>
+                     <li>Paste titles or topics into the text area below, one per line.</li>
+                     <li>Use lines starting with `---` to create category dividers in the results.</li>
+                     <li>Use the filter controls (Language, File Type, Order, Attribute, Year Range, Author, Exact Phrase) to refine your searches.</li>
+                     <li>The "File Type" dropdown provides common formats; use the manual input for others.</li>
+                     <li>Check "Exact Phrase" to search for the title/topic as a precise phrase (may reduce results).</li>
+                     <li>Click "Generate Links" to see individual search links below each title for all included sites.</li>
+                     <li>Click the colored buttons below the filters to copy all generated links for a specific site.</li>
+                     <li>Use the specialized search buttons ("Advanced Google Search", "JEDEC Standards (Google)") for targeted Google searches across all titles with applied filters.</li>
+                     <li>Use the toggle buttons ("Toggle Digital Library", "Toggle Marketplaces", etc.) to show or hide specific categories of search links in the results for easier navigation.</li>
+                 </ul>
+             </div>
+
+
+            <textarea id="resource-titles-textarea" placeholder="Paste media or technical resource titles/topics here, one per line...">--- Technical Books ---
+Introduction to Plasma Physics and Controlled Fusion
+Fundamentals of Plasma Physics
+Physics of Fully Ionized Plasmas
+Plasma Physics and Fusion Energy
+Controlled Fusion and Plasma Physics: A Tutorial
+Fusion Plasma Physics
+Magnetic Confinement Fusion
+Inertial Confinement Fusion
+High-Voltage Engineering Fundamentals
+Pulsed Power Systems: Principles and Applications
+Fundamentals of High Power Pulsed Nanoelectronics
+The Physics and Technology of Particle and Photon Beams
+High-Power Pulsed Spindt-Type Cold Cathodes
+Power Electronics: Converters, Applications, and Design
+Fundamentals of Power Electronics
+High-Voltage Engineering: Theory and Practice
+Principles of Pulse Power Techniques
+Dielectric Breakdown in Solids
+Scientific Foundations of Vacuum Technique
+Vacuum Technology: An Introduction
+Handbook of Vacuum Science and Technology
+Foundations of Vacuum Science and Technology
+Vacuum Practice
+High Vacuum Technology
+Materials Science and Engineering: An Introduction
+Physical Metallurgy Principles
+The Structure and Properties of Materials
+Materials Science for Engineers
+Physical Metallurgy and Advanced Materials
+Introduction to Solid State Physics
+Mechanical Behavior of Materials
+Introduction to Health Physics
+Radiation Detection and Measurement
+The Health Physics and Radiological Health Handbook
+Basic Health Physics
+Machinery's Handbook
+Machine Tool Practices
+Sheet Metal Handbook
+Welding Handbook (Any Edition)
+CNC Programming Handbook
+Jigs and Fixtures Design
+The Art of Electronics
+Principles of Electric Circuits: Conventional Current Version
+Practical Electronics for Inventors
+Foundations of Analog and Digital Electronic Circuits
+Microelectronic Circuits
+Circuit Analysis For Dummies
+Digital Design and Computer Architecture
+Shigley's Mechanical Engineering Design
+Fundamentals of Machine Component Design
+Marks' Standard Handbook for Mechanical Engineers
+Engineering Mechanics: Statics and Dynamics
+Finite Element Analysis
+Clean Code: A Handbook of Agile Software Craftsmanship
+Structure and Interpretation of Computer Programs
+Numerical Recipes (Any Edition/Language)
+The Art of Computer Programming (Volumes 1-4A)
+Introduction to Algorithms
+Operating System Concepts
+Computer Networks
+The Visual Display of Quantitative Information
+Visualization Analysis and Design
+Interactive Data Visualization for the Web
+Data Visualization: A Practical Introduction
+
+--- Standards & Safety ---
+NFPA 70E: Standard for Electrical Safety in the Workplace
+ISO 9001: Quality management systems — Requirements
+ANSI Y32.2 / IEEE 315: Graphic Symbols for Electrical and Electronics Diagrams
+ANSI B4.1: Preferred Limits and Fits for Cylindrical Parts
+OSHA 1910 Subpart S: Electrical
+ASTM Standards (Specify relevant standard, e.g., ASTM E139 for Creep Testing)
+IEEE Standards (Specify relevant standard, e.g., IEEE 80 for Substation Grounding)
+JESD22-A114E: ESD Sensitivity Testing Human Body Model (HBM)
+JESD79-4B: DDR4 SDRAM Standard
+
+--- General Knowledge & Other Fields ---
+A Short History of Nearly Everything
+Sapiens: A Brief History of Humankind
+Factfulness: Ten Reasons We're Wrong About the World—and Why Things Are Better Than You Think
+How to Win Friends & Influence People
+Talk Like TED: The 9 Public-Speaking Secrets of the World's Top Minds
+Crucial Conversations: Tools for Talking When Stakes Are High
+
+--- History ---
+Guns, Germs, and Steel: The Fates of Human Societies
+A History of Warfare
+The Rise and Fall of the Great Powers: Economic Change and Military Conflict from 1500 to 2000
+
+--- Science (General) ---
+Cosmos
+A Brief History of Time
+The Selfish Gene
+
+--- Learning & Memory ---
+Make It Stick: The Science of Successful Learning
+Ultralearning: Master Hard Skills, Outsmart the Competition, and Accelerate Your Career
+A Mind for Numbers: How to Excel at Math and Science (Even If You Flunked Algebra)
+
+--- Neuroscience ---
+Principles of Neural Science
+The Man Who Mistook His Wife for a Hat and Other Clinical Tales
+Incognito: The Secret Lives of the Brain
+
+--- Cognition ---
+Thinking, Fast and Slow
+How the Mind Works
+The Blank Slate: The Modern Denial of Human Nature
+
+--- Mathematics ---
+Calculus (Any Standard Textbook, e.g., Stewart, Thomas, Adams)
+Linear Algebra and Its Applications
+Differential Equations and Linear Algebra
+Probability and Statistics for Engineering and the Sciences
+
+--- Popular Sci-Fi Books ---
+Frankenstein
+Nineteen Eighty-Four
+Brave New World
+The Time Machine
+The Hitchhiker's Guide to the Galaxy
+Dune
+Foundation (Series)
+Snow Crash
+Neuromancer
+Hyperion (Cantos)
+The Martian
+Contact
+Do Androids Dream of Electric Sheep?
+The Left Hand of Darkness
+Ender's Game
+Fahrenheit 451
+Slaughterhouse-Five
+2001: A Space Odyssey
+The War of the Worlds
+A Canticle for Leibowitz
+Stranger in a Strange Land
+The Three-Body Problem (Remembrance of Earth's Past #1)
+Ancillary Justice (Imperial Radch #1)
+Project Hail Mary
+The Calculating Stars (Lady Astronaut #1)
+A Memory Called Empire (Teixcalaan #1)
+Network Effect (Murderbot Diaries #5)
+Piranesi
+Leviathan Wakes (The Expanse #1)
+Annihilation (Southern Reach #1)
+The Martian Chronicles
+
+--- Visual Novels & Manga ---
+Steins;Gate
+Clannad
+Fate/stay night
+Tsukihime
+Umineko When They Cry
+Berserk
+One Piece
+Naruto
+Attack on Titan
+Fullmetal Alchemist
+Death Note
+My Hero Academia
+Jujutsu Kaisen
+Spy x Family
+Chainsaw Man
+</textarea>
+
+            <div class="flex flex-col items-center mt-6 gap-6">
+
+                <div class="control-group">
+                    <button id="generate-links-button">Generate Links</button>
+                </div>
+
+                <div class="control-group filter-group flex-col md:flex-row md:items-start">
+                    <div class="filter-item">
+                        <label for="language-select" class="filter-label">Language:</label>
+                        <select id="language-select" class="filter-select">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="zh">中文</option>
+                            <option value="ru">Русский</option>
+                            <option value="ja">日本語</option>
+                            <option value="pt">Português</option>
+                            <option value="">Any Language</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item flex-col md:flex-row md:items-center">
+                         <label for="filetype-select" class="filter-label">File Type:</label>
+                         <div class="flex items-center gap-2 w-full md:w-auto">
+                             <select id="filetype-select" class="filter-select flex-grow">
+                                <option value="">Any File Type</option>
+                                <option value="pdf">PDF</option>
+                                <option value="epub">EPUB</option>
+                                <option value="mobi">MOBI</option>
+                                <option value="djvu">DJVU</option>
+                                <option value="fb2">FB2</option>
+                                <option value="txt">TXT</option>
+                                <option value="html">HTML</option>
+                                <option value="rtf">RTF</option>
+                                <option value="azw3">AZW3</option>
+                                <option value="cbr">CBR</option>
+                                <option value="cbz">CBZ</option>
+                                <option value="doc">DOC</option>
+                                <option value="docx">DOCX</option>
+                                <option value="ppt">PPT</option>
+                                <option value="pptx">PPTX</option>
+                                <option value="odt">ODT</option>
+                                <option value="rtf">RTF</option>
+                            </select>
+                             <input type="text" id="manual-filetype-input" class="filter-input w-24 flex-shrink-0" placeholder="or type...">
+                         </div>
+                    </div>
+
+                    <div class="filter-item">
+                         <label for="order-select" class="filter-label">Order:</label>
+                         <select id="order-select" class="filter-select">
+                            <option value="">Default Order</option>
+                            <option value="relevance">Relevance</option>
+                            <option value="date">Date</option>
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                            <option value="downloads">Downloads/Views</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item">
+                         <label for="attribute-select" class="filter-label">Attribute:</label>
+                         <select id="attribute-select" class="filter-select">
+                            <option value="">Any Attribute</option>
+                            <option value="first edition">First Edition</option>
+                            <option value="signed">Signed</option>
+                            <option value="altered">Altered</option>
+                            <option value="hardback">Hardback</option>
+                                <option value="paperback">Paperback</option>
+                            <option value="collectible">Collectible</option>
+                            <option value="rare">Rare</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group filter-group flex-col md:flex-row md:items-start">
+                     <div class="filter-item">
+                         <label for="min-year-input" class="filter-label">Year Range:</label>
+                         <input type="number" id="min-year-input" class="filter-input w-20" placeholder="Min Year">
+                         <span>-</span>
+                         <input type="number" id="max-year-input" class="filter-input w-20" placeholder="Max Year">
+                     </div>
+
+                     <div class="filter-item">
+                         <label for="author-input" class="filter-label">Author:</label>
+                         <input type="text" id="author-input" class="filter-input w-32" placeholder="Author Name">
+                     </div>
+
+                     <div class="filter-item">
+                         <label for="exact-phrase-checkbox" class="filter-label">Exact Phrase:</label>
+                         <input type="checkbox" id="exact-phrase-checkbox" class="filter-checkbox">
+                     </div>
+                 </div>
+
+
+                <div class="control-group">
+                    <button id="advanced-google-button" class="specialized-button">Advanced Google Search</button>
+                     <button id="jedec-button" class="specialized-button">JEDEC Standards (Google)</button>
+                </div>
+
+                <div id="copy-buttons-area" class="control-group flex-col">
+                     <p class="text-gray-400 text-sm mb-4">Copy links for:</p> <div id="copy-buttons-container" class="control-group !gap-2 !p-0 !bg-transparent !border-none">
+                        </div>
+                </div>
+
+                 <div class="control-group flex-col md:flex-row md:items-center">
+                     <button id="toggle-digital-library-links-button" class="toggle-button">Toggle Digital Library</button>
+                     <button id="toggle-marketplace-links-button" class="toggle-button">Toggle Marketplaces</button>
+                     <button id="toggle-standards-links-button" class="toggle-button">Toggle Standards</button>
+                     <button id="toggle-tech-dbs-links-button" class="toggle-button">Toggle Tech Databases</button>
+                     <button id="toggle-patents-links-button" class="toggle-button">Toggle Patents</button>
+                     <button id="toggle-code-links-button" class="toggle-button">Toggle Code Repos</button>
+                     <button id="toggle-forums-links-button" class="toggle-button">Toggle Forums</button>
+                 </div>
+
+
+            </div>
+
+
+            <div id="search-results">
+                </div>
+        </div>
+    </section>
+
+    <footer class="section-bg-dark text-gray-500 py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>© <a href="https://www.youtube.com/@AppliedScience" target="_blank">2025</a> <a href="https://www.youtube.com/c/StuffMadeHere" target="_blank">Quinn</a> <a href="https://www.youtube.com/c/BreakingTaps" target="_blank">Kinata</a>. <a href="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA/search?query=semiconductor" target="_blank">All</a> <a href="https://www.youtube.com/@PosyMusic" target="_blank">rights</a> <a href="https://xkcd.com/" target="_blank">reserved.</a> <a href="https://www.youtube.com/@EdwinHwu" target="_blank">🧪</a> <a href="https://www.youtube.com/watch?v=rJPKTCdk-WI" target="_blank">🔬</a></p>
+             <div class="footer-nav-links">
+                 <a href="index.html">Portfolio Home</a>
+                 <a href="study_plan.html">Study Plan</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('resource-titles-textarea');
+            const generateButton = document.getElementById('generate-links-button');
+            const resultsDiv = document.getElementById('search-results');
+            const copyButtonsArea = document.getElementById('copy-buttons-area');
+            const copyButtonsContainer = document.getElementById('copy-buttons-container');
+
+            // Filter Inputs
+            const languageSelect = document.getElementById('language-select');
+            const filetypeSelect = document.getElementById('filetype-select');
+            const manualFiletypeInput = document.getElementById('manual-filetype-input');
+            const orderSelect = document.getElementById('order-select');
+            const attributeSelect = document.getElementById('attribute-select');
+            const minYearInput = document.getElementById('min-year-input'); // New
+            const maxYearInput = document.getElementById('max-year-input'); // New
+            const authorInput = document.getElementById('author-input'); // New
+            const exactPhraseCheckbox = document.getElementById('exact-phrase-checkbox'); // New
+
+            // Specialized Search Buttons
+            const advancedGoogleButton = document.getElementById('advanced-google-button');
+            const jedecButton = document.getElementById('jedec-button');
+
+            // Toggle Buttons
+            const toggleDigitalLibraryLinksButton = document.getElementById('toggle-digital-library-links-button'); // Renamed
+            const toggleMarketplaceLinksButton = document.getElementById('toggle-marketplace-links-button'); // New
+            const toggleStandardsLinksButton = document.getElementById('toggle-standards-links-button'); // Renamed
+            const toggleTechDBsLinksButton = document.getElementById('toggle-tech-dbs-links-button'); // New
+            const togglePatentsLinksButton = document.getElementById('toggle-patents-links-button'); // New
+            const toggleCodeLinksButton = document.getElementById('toggle-code-links-button'); // New
+            const toggleForumsLinksButton = document.getElementById('toggle-forums-links-button'); // New
+
+
+            // Define the search URLs for ALL sites
+            // Sites that use a simple base URL + encoded title
+            const simpleSearchUrls = {
+                'Archive': `https://archive.org/search?query=`,
+                "Anna's": `https://annas-archive.org/search?q=`,
+                'LibGen': `http://libgen.rs/search.php?req=`,
+                'Sci-Hub': `https://sci-hub.st/https://scholar.google.com/scholar?q=`, // Sci-Hub often works best with a Scholar URL
+                'eBay': `https://www.ebay.com/sch/i.html?_nkw=`, // Base for eBay search
+                'Amazon': `https://www.amazon.com/s?k=`, // Base for Amazon search
+                'Audible': `https://www.audible.com/search?keywords=`, // Base for Audible search
+                'LibriVox': `https://librivox.org/search?q=`, // Base for LibriVox search
+                'Project Gutenberg': `https://www.gutenberg.org/ebooks/search/?query=`, // Base for Project Gutenberg search
+                'Open Library': `https://openlibrary.org/search?q=`, // Base for Open Library search
+                'ManyBooks': `https://manybooks.net/search/google?search=`, // Base for ManyBooks.net search
+                'BookBub': `https://www.bookbub.com/search?search=`, // Base for BookBub search
+                'Google Books': `https://books.google.com/books?q=`, // Base for Google Books search
+                'Facebook Marketplace': `https://www.facebook.com/marketplace/search/?query=`, // Base for Facebook Marketplace
+                'Craigslist': `https://geo.craigslist.org/search/sss?query=` // Base for Craigslist (using 'sss' for sales/all)
+            };
+
+            // Sites that use Google Search with a site: operator
+            const googleSiteSearchUrls = {
+                'Scholar': `https://scholar.google.com/scholar?q=`, // Scholar has specific params, but base is Google
+                'IEEE Xplore': `https://www.google.com/search?q=site:ieeexplore.ieee.org+`,
+                'ACM Digital Library': `https://www.google.com/search?q=site:dl.acm.org+`,
+                'ScienceDirect': `https://www.google.com/search?q=site:sciencedirect.com+`,
+                'SpringerLink': `https://www.google.com/search?q=site:link.springer.com+`,
+                'ArXiv': `https://www.google.com/search?q=site:arxiv.org+`,
+                'Google Patents': `https://patents.google.com/?q=`, // Google Patents has a different base
+                'USPTO Search': `https://www.google.com/search?q=site:uspto.gov+`,
+                'EPO Search': `https://www.google.com/search?q=site:epo.org+`,
+                'GitHub Search': `https://www.google.com/search?q=site:github.com+`,
+                'GitLab Search': `https://www.google.com/search?q=site:gitlab.com+`,
+                'Stack Overflow': `https://www.google.com/search?q=site:stackoverflow.com+`
+            };
+
+            // Combine all search URLs for iteration
+            const allSearchUrls = { ...simpleSearchUrls, ...googleSiteSearchUrls };
+
+
+             // Define the sites whose individual links are hidden by default but can be toggled
+             const sitesToToggleDigitalLibrary = [
+                 'Project Gutenberg',
+                 'Open Library',
+                 'ManyBooks',
+                 'BookBub',
+                 'Google Books',
+                 'Archive', // Include Archive in digital library toggle
+                 'Audible', // Include Audible in digital library toggle (audiobooks)
+                 'LibriVox' // Include LibriVox in digital library toggle (audiobooks)
+             ];
+
+             const sitesToToggleMarketplace = [
+                 'eBay',
+                 'Amazon',
+                 'Facebook Marketplace',
+                 'Craigslist'
+             ];
+
+             const sitesToToggleStandards = [
+                 'JEDEC Standards' // JEDEC is handled by a specialized button, but include for toggling consistency
+                 // Note: Specific standard numbers like NFPA 70E are treated as regular titles for search
+             ];
+
+             const sitesToToggleTechDBs = [
+                 'Scholar', // Scholar is a tech/academic DB
+                 'IEEE Xplore',
+                 'ACM Digital Library',
+                 'ScienceDirect',
+                 'SpringerLink',
+                 'ArXiv'
+             ];
+
+             const sitesToTogglePatents = [
+                 'Google Patents',
+                 'USPTO Search',
+                 'EPO Search'
+             ];
+
+             const sitesToToggleCode = [
+                 'GitHub Search',
+                 'GitLab Search'
+             ];
+
+             const sitesToToggleForums = [
+                 'Stack Overflow'
+             ];
+
+
+             // Combine all toggled sites for initial hiding logic
+             const allSitesToToggle = [
+                 ...sitesToToggleDigitalLibrary,
+                 ...sitesToToggleMarketplace,
+                 ...sitesToToggleStandards,
+                 ...sitesToToggleTechDBs,
+                 ...sitesToTogglePatents,
+                 ...sitesToToggleCode,
+                 ...sitesToToggleForums
+             ];
+
+
+             // Define URL modifiers for specific searches (language, file type, order, attribute, year, author, exact phrase)
+             // Each function takes encodedTitle, filters (object), and siteName as arguments
+             const urlModifiers = {
+                 'Archive': (encodedTitle, filters) => {
+                     let params = ``;
+                     // Archive.org supports sorting
+                     if (filters.order === 'date') params += `&sort=date`;
+                     else if (filters.order === 'title') params += `&sort=title`;
+                     else if (filters.order === 'downloads') params += `&sort=downloads`;
+                     // Archive.org media type filter (basic support)
+                     if (filters.archiveMediaType) params += `&and%5B%5D=mediatype%3A%22${filters.archiveMediaType}%22`;
+                     // File type, language, year, author, attribute filtering is not a standard URL param for Archive.org 'search'
+                     return params;
+                 },
+                 'Audible': (encodedTitle, filters) => {
+                      // Audible is audiobooks, no file type filter needed. Language/Order/Year/Author/Attribute not standard URL params.
+                      return '';
+                 },
+                 'LibriVox': (encodedTitle, filters) => {
+                      // LibriVox is audiobooks, no file type filter needed. Language/Order/Year/Author/Attribute not standard URL params.
+                      return '';
+                 },
+                 'eBay': (encodedTitle, filters) => {
+                     let params = `&_sop=15`; // Suffix for eBay lowest price sort (Can be adjusted)
+                     // eBay doesn't have standard file type, language, year, author filters via search URL
+                     // Attribute can be appended to the query
+                     let query = encodedTitle;
+                     if (filters.attribute) query += `+${encodeURIComponent(filters.attribute)}`;
+                     return query + params; // Return modified query + params
+                 },
+                 'Amazon': (encodedTitle, filters) => {
+                      // Amazon doesn't have standard file type or language filters via search URL
+                      // Order can be changed with 's=' parameter, but relevance is default. No simple 'downloads' sort via URL.
+                       // Attribute can be appended to the query
+                      let query = encodedTitle;
+                      if (filters.attribute) query += `+${encodeURIComponent(filters.attribute)}`;
+                      return query; // Return modified query
+                 },
+                 'Facebook Marketplace': (encodedTitle, filters) => {
+                     // Facebook Marketplace doesn't have standard language, file type, order, year, author filters via search URL
+                      // Attribute can be appended to the query
+                     let query = encodedTitle;
+                     if (filters.attribute) query += `+${encodeURIComponent(filters.attribute)}`;
+                     return query; // Return modified query
+                 },
+                 'Craigslist': (encodedTitle, filters) => {
+                      // Craigslist doesn't have standard language, file type, order, year, author filters via search URL
+                      // Attribute can be appended to the query
+                     let query = encodedTitle;
+                     if (filters.attribute) query += `+${encodeURIComponent(filters.attribute)}`;
+                     return query; // Return modified query
+                 },
+                 'Scholar': (encodedTitle, filters) => {
+                     let params = '';
+                     let query = encodedTitle;
+                     if (filters.language) params += `&hl=${filters.language}`; // Google Scholar uses hl for language
+                     if (filters.fileType) params += `&as_filetype=${filters.fileType}`; // Google Scholar uses as_filetype
+                     if (filters.minYear) params += `&as_ylo=${filters.minYear}`; // Google Scholar uses as_ylo for min year
+                     if (filters.maxYear) params += `&as_yhi=${filters.maxYear}`; // Google Scholar uses as_yhi for max year
+                     if (filters.author) query += ` author:"${encodeURIComponent(filters.author)}"`; // Google Scholar uses author:
+                     // Google Scholar sorting by date is complex (as_ylo, as_yhi), not simple 'date' or 'relevance'
+                     // No simple 'downloads' or attribute sort via URL.
+                     return query + params; // Return modified query + params
+                 },
+                 "Anna's": (encodedTitle, filters) => {
+                     let params = '';
+                     if (filters.language) params += `&lang=${filters.language}`; // Anna's Archive uses lang
+                     if (filters.fileType) params += `&ext=${filters.fileType}`; // Anna's Archive uses ext
+                     if (filters.order === 'date') params += `&sort=newest`; // Anna's Archive uses newest/oldest
+                     else if (filters.order === 'relevance' || filters.order === 'downloads') params += `&sort=most+popular`; // Anna's Archive uses most popular
+                     if (filters.minYear) params += `&year=${filters.minYear}`; // Anna's Archive uses year (basic)
+                     // Anna's Archive doesn't have simple title/author/attribute sort or max year via URL
+                     return encodedTitle + params; // Return base query + params
+                 },
+                 'LibGen': (encodedTitle, filters) => { // LibGen uses full language name
+                     let params = '';
+                     const langMap = {
+                         'en': 'English', 'es': 'Spanish', 'fr': 'French', 'de': 'German',
+                         'zh': 'Chinese', 'ru': 'Russian', 'ja': 'Japanese', 'pt': 'Português'
+                     };
+                     if (filters.language && langMap[filters.language]) params += `&language=${langMap[filters.language]}`; // LibGen uses language
+                     if (filters.fileType) params += `&extension=${filters.fileType}`; // LibGen uses extension
+                     if (filters.order === 'date') params += `&column=year`; // LibGen can sort by year
+                     else if (filters.order === 'title') params += `&column=title`; // LibGen can sort by title
+                     else if (filters.order === 'author') params += `&column=author`; // LibGen can sort by author
+                     else if (filters.order === 'downloads') params += `&column=downloads`;
+                     if (filters.minYear) params += `&yearfrom=${filters.minYear}`; // LibGen uses yearfrom/yearto
+                     if (filters.maxYear) params += `&yearto=${filters.maxYear}`;
+                     // Relevance is default on LibGen. Attribute filtering not a standard URL param.
+                     return encodedTitle + params; // Return base query + params
+                 },
+                 'Project Gutenberg': (encodedTitle, filters) => {
+                      // Project Gutenberg search is basic, no language, file type, order, year, author, or attribute filters via URL
+                      return encodedTitle; // Return base query only
+                 },
+                 'Open Library': (encodedTitle, filters) => { // Open Library uses language code, but often 'eng' for English
+                      let params = '';
+                     const olLangMap = {
+                          'en': 'eng', 'es': 'spa', 'fr': 'fre', 'de': 'ger',
+                          'zh': 'chi', 'ru': 'rus', 'ja': 'jpn', 'pt': 'por'
+                     };
+                      if (filters.language && olLangMap[filters.language]) params += `&language=${olLangMap[filters.language]}`; // Open Library uses language
+                      // Open Library doesn't have standard file type, order, year, author, or attribute filters via URL
+                      return encodedTitle + params; // Return base query + params
+                 },
+                 'ManyBooks': (encodedTitle, filters) => {
+                      let params = '';
+                      if (filters.language) params += `&language=${filters.language}`; // ManyBooks uses language code
+                       // ManyBooks doesn't have standard file type, order, year, author, or attribute filters via URL
+                      return encodedTitle + params; // Return base query + params
+                 },
+                 'BookBub': (encodedTitle, filters) => {
+                      // BookBub search is basic, no language, file type, order, year, author, or attribute filters via URL
+                      return encodedTitle; // Return base query only
+                 },
+                 'Google Books': (encodedTitle, filters) => {
+                      let params = '';
+                      let query = encodedTitle;
+                      if (filters.language) params += `&hl=${filters.language}&lr=lang_${filters.language}`; // Google Books uses hl and lr
+                      if (filters.minYear) params += `&as_ylo=${filters.minYear}`; // Google Books uses as_ylo for min year
+                      if (filters.maxYear) params += `&as_yhi=${filters.maxYear}`; // Google Books uses as_yhi for max year
+                      if (filters.author) query += ` author:"${encodeURIComponent(filters.author)}"`; // Google Books uses author:
+                       // Google Books doesn't have standard file type, order, or attribute filters via search URL
+                      return query + params; // Return modified query + params
+                 },
+                 // Google Site Searches (IEEE, ACM, ScienceDirect, SpringerLink, ArXiv, USPTO, EPO, GitHub, GitLab, Stack Overflow)
+                 'IEEE Xplore': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'ACM Digital Library': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'ScienceDirect': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'SpringerLink': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'ArXiv': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'Google Patents': (encodedTitle, filters) => {
+                      // Google Patents uses a different query structure, basic support for keyword and author
+                      let query = encodedTitle;
+                      if (filters.author) query += ` inventor:"${encodeURIComponent(filters.author)}"`; // Google Patents uses inventor:
+                      // File type, language, order, year, attribute not standard URL params for Google Patents simple search
+                      return query; // Return modified query
+                 },
+                 'USPTO Search': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'EPO Search': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'GitHub Search': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'GitLab Search': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); },
+                 'Stack Overflow': (encodedTitle, filters) => { return encodedTitle + buildGoogleSearchParams(filters); }
+             };
+
+             // Helper function to build Google Search parameters
+             function buildGoogleSearchParams(filters) {
+                 let params = '';
+                 if (filters.language) params += `&hl=${filters.language}&lr=lang_${filters.language}`;
+                 if (filters.fileType) params += `+filetype:${filters.fileType}`; // filetype is part of the query for site search
+                 if (filters.minYear) params += `+after:${filters.minYear}`; // Google uses after/before for year range in query
+                 if (filters.maxYear) params += `+before:${filters.maxYear}`;
+                 if (filters.author) params += `+author:"${encodeURIComponent(filters.author)}"`; // author: is part of the query
+                 // Order and Attribute filtering not standard URL params for general Google search
+                 return params;
+             }
+
+
+             // Modifier for the Advanced Google Search Button (handled separately)
+             const advancedGoogleModifier = (encodedTitle, filters) => {
+                 let query = encodedTitle;
+                 if (filters.fileType) query += ` filetype:${filters.fileType}`;
+                 if (filters.minYear) query += ` after:${filters.minYear}`;
+                 if (filters.maxYear) query += ` before:${filters.maxYear}`;
+                 if (filters.author) query += ` author:"${encodeURIComponent(filters.author)}"`;
+                 // Google Search language and order parameters are complex and not consistently applied via simple URL params like other sites.
+                 // Focusing on filetype, year, and author for this advanced search button.
+                 return query; // Return the full query string, not just params
+             };
+
+             // Modifier for the JEDEC Standards Button (handled separately)
+             const jedecModifier = (encodedTitle, filters) => {
+                 // Search for the standard number and explicitly look for PDF files
+                 // We can also try to limit the search to the jedec.org site, but a broader search might find documents hosted elsewhere.
+                 // Let's use a general Google search with filetype:pdf and the standard number.
+                 let query = encodedTitle + ' filetype:pdf';
+                  if (filters.minYear) query += ` after:${filters.minYear}`;
+                 if (filters.maxYear) query += ` before:${filters.maxYear}`;
+                  if (filters.author) query += ` author:"${encodeURIComponent(filters.author)}"`;
+                 // Optional: add site:jedec.org if desired, but might miss some results
+                 // query += ' site:jedec.org';
+                 return query; // Return the full query string
+             };
+
+
+            generateButton.addEventListener('click', () => {
+                const lines = textarea.value.split('\n').map(line => line.trim()); // Get all lines, trim whitespace
+
+                // Collect filter values
+                const filters = {
+                    language: languageSelect.value,
+                    fileType: manualFiletypeInput.value.trim() || filetypeSelect.value,
+                    order: orderSelect.value,
+                    attribute: attributeSelect.value,
+                    minYear: minYearInput.value.trim(),
+                    maxYear: maxYearInput.value.trim(),
+                    author: authorInput.value.trim(),
+                    exactPhrase: exactPhraseCheckbox.checked,
+                    // Add Archive.org specific filter if needed later
+                    // archiveMediaType: archiveMediaTypeSelect.value
+                };
+
+
+                resultsDiv.innerHTML = ''; // Clear previous results
+                copyButtonsContainer.innerHTML = ''; // Clear previous copy buttons
+
+                const resourceTitles = lines.filter(line => line.length > 0 && !line.startsWith('---'));
+
+                if (resourceTitles.length === 0) {
+                     resultsDiv.innerHTML = '<p class="text-center text-gray-400">Please enter media or technical resource titles/topics in the text area above.</p>';
+                     return;
+                 }
+
+                // Generate resource links
+                lines.forEach(line => {
+                    if (line.startsWith('---')) {
+                        // If the line starts with '---', create a divider and heading
+                        const divider = document.createElement('hr');
+                        divider.classList.add('divider'); // Apply divider styling
+                        resultsDiv.appendChild(divider);
+
+                         const dividerText = line.substring(3).trim(); // Remove '---' and trim
+                         if (dividerText.length > 0) {
+                             const heading = document.createElement('h3'); // Use h3 for category titles
+                             heading.classList.add('category-heading'); // Apply new category heading styling
+                             heading.textContent = dividerText;
+                             resultsDiv.appendChild(heading);
+                         }
+
+                    } else if (line.length > 0) {
+                        // If it's not a divider and not empty, treat as a resource title/topic
+                        const title = line;
+                        let encodedTitle = encodeURIComponent(title);
+
+                        // Apply exact phrase filter
+                        if (filters.exactPhrase) {
+                            encodedTitle = `%22${encodedTitle}%22`; // Wrap in quotes for exact phrase
+                        }
+
+
+                        // Create HTML elements for the resource title and its links
+                        const resourceResultItem = document.createElement('div');
+                        resourceResultItem.classList.add('resource-result-item');
+
+                        // Use a div for the title so it takes its own line
+                        const titleElement = document.createElement('div');
+                        titleElement.classList.add('resource-title');
+                        titleElement.textContent = title;
+                        resourceResultItem.appendChild(titleElement);
+
+                        const linksDiv = document.createElement('div');
+                        linksDiv.classList.add('search-links'); // Apply class for styling
+
+                        // Create and append the links as styled buttons
+                        // Iterate through ALL site names to create links, but hide some by default
+                        for (const siteName in allSearchUrls) {
+                            const baseUrl = allSearchUrls[siteName];
+                            if (baseUrl) { // Ensure the site name exists in allSearchUrls
+                                const link = document.createElement('a');
+                                // Construct the full URL using the base, encoded title, and modifiers
+                                const modifierFn = urlModifiers[siteName];
+                                // Pass the entire filters object to the modifier
+                                const modifiedQueryOrParams = modifierFn ? modifierFn(encodedTitle, filters) : encodedTitle;
+
+                                let fullUrl;
+                                if (googleSiteSearchUrls[siteName]) {
+                                     // For Google site searches, the modifier returns the full query string including site:
+                                     fullUrl = baseUrl + modifiedQueryOrParams;
+                                } else if (siteName === 'Google Patents') {
+                                     // Google Patents has a unique structure
+                                     fullUrl = baseUrl + modifiedQueryOrParams;
+                                }
+                                else {
+                                    // For simple search URLs, the modifier returns parameters to append
+                                    fullUrl = baseUrl + encodedTitle + modifiedQueryOrParams;
+                                }
+
+
+                                link.href = fullUrl;
+                                link.textContent = `[${siteName}]`; // Text inside the button
+                                link.target = '_blank'; // Open link in a new tab
+                                 // Add a data attribute to identify the site for copying and toggling
+                                link.dataset.site = siteName;
+                                 // Add class for general link styling
+                                link.classList.add('text-sm', 'hover:text-ffffff', 'no-underline', 'hover:underline', 'px-2', 'py-1', 'border', 'rounded', 'inline-block', 'transition', 'duration-200', 'ease-in-out', 'mr-0.5', 'font-medium', 'text-shadow'); /* Combined and refined classes */
+
+                                // Hide links based on toggle groups
+                                if (allSitesToToggle.includes(siteName)) {
+                                    link.style.display = 'none';
+                                }
+
+                                linksDiv.appendChild(link);
+                            }
+                        }
+
+                        resourceResultItem.appendChild(linksDiv);
+                        resultsDiv.appendChild(resourceResultItem);
+                    }
+                    // Ignore empty lines that don't start with '---'
+                });
+
+                // Generate copy buttons after generating results
+                 // Iterate through ALL site names from the allSearchUrls object, plus the special buttons
+                 const allCopySites = Object.keys(allSearchUrls).concat(['Advanced Google Search', 'JEDEC Standards']);
+
+                 for (const siteName of allCopySites) {
+                     const copyButton = document.createElement('button');
+                     copyButton.classList.add('copy-button');
+                     copyButton.textContent = siteName; // Just the site name as button text
+                     copyButton.dataset.site = siteName; // Store the site name in a data attribute
+
+                     copyButton.addEventListener('click', async () => {
+                         const siteToCopy = copyButton.dataset.site;
+                         const urlsToCopy = [];
+                         const resourceItems = resultsDiv.querySelectorAll('.resource-result-item');
+
+                         // Get the current filter values for copying
+                         const currentFilters = {
+                            language: languageSelect.value,
+                            fileType: manualFiletypeInput.value.trim() || filetypeSelect.value,
+                            order: orderSelect.value,
+                            attribute: attributeSelect.value,
+                            minYear: minYearInput.value.trim(),
+                            maxYear: maxYearInput.value.trim(),
+                            author: authorInput.value.trim(),
+                            exactPhrase: exactPhraseCheckbox.checked,
+                            // archiveMediaType: archiveMediaTypeSelect.value // Add if implemented
+                         };
+
+
+                         resourceItems.forEach(item => {
+                             const title = item.querySelector('.resource-title').textContent.trim();
+                             let encodedTitleForCopy = encodeURIComponent(title);
+
+                             // Apply exact phrase filter for copying as well
+                             if (currentFilters.exactPhrase) {
+                                 encodedTitleForCopy = `%22${encodedTitleForCopy}%22`;
+                             }
+
+                             let fullUrl;
+
+                             if (siteToCopy === 'Advanced Google Search') {
+                                 // For Advanced Google Search, use its specific modifier
+                                 const query = advancedGoogleModifier(encodedTitleForCopy, currentFilters);
+                                 fullUrl = `https://www.google.com/search?q=${query}`;
+                             } else if (siteToCopy === 'JEDEC Standards') {
+                                  // For JEDEC Standards, use its specific modifier
+                                 const query = jedecModifier(encodedTitleForCopy, currentFilters);
+                                 fullUrl = `https://www.google.com/search?q=${query}`;
+                             }
+                             else {
+                                 // For other sites, use their respective modifiers
+                                 const baseUrl = allSearchUrls[siteToCopy];
+                                 if (baseUrl) {
+                                      const modifierFn = urlModifiers[siteToCopy];
+                                       const modifiedQueryOrParams = modifierFn ? modifierFn(encodedTitleForCopy, currentFilters) : encodedTitleForCopy;
+
+                                        if (googleSiteSearchUrls[siteToCopy]) {
+                                            fullUrl = baseUrl + modifiedQueryOrParams;
+                                        } else if (siteToCopy === 'Google Patents') {
+                                            fullUrl = baseUrl + modifiedQueryOrParams;
+                                        }
+                                        else {
+                                             fullUrl = baseUrl + encodedTitleForCopy + modifiedQueryOrParams;
+                                        }
+
+                                 } else {
+                                     // Should not happen if allCopySites is built correctly
+                                     console.error(`Base URL not found for site: ${siteToCopy}`);
+                                     return; // Skip this item if URL not found
+                                 }
+                             }
+                             urlsToCopy.push(fullUrl);
+                         });
+
+                         if (urlsToCopy.length > 0) {
+                             try {
+                                 await navigator.clipboard.writeText(urlsToCopy.join('\n'));
+                                 const originalText = copyButton.textContent;
+                                 copyButton.textContent = `Copied!`; // Shorter feedback
+                                  // Temporarily change background color on success
+                                 const originalBg = copyButton.style.backgroundColor;
+                                 const originalBorder = copyButton.style.borderColor;
+                                 copyButton.style.backgroundColor = 'rgba(76, 175, 80, 0.5)'; /* Greenish for success */
+                                 copyButton.style.borderColor = 'rgba(76, 175, 80, 0.7)';
+
+
+                                 setTimeout(() => {
+                                     copyButton.textContent = originalText;
+                                      copyButton.style.backgroundColor = originalBg; // Revert background
+                                      copyButton.style.borderColor = originalBorder; // Revert border
+                                 }, 1500); // Revert text and color after 1.5 seconds
+                             } catch (err) {
+                                 console.error('Failed to copy URLs: ', err);
+                                  const originalText = copyButton.textContent;
+                                  copyButton.textContent = `Failed!`; // Feedback on failure
+                                   // Temporarily change background color on failure
+                                  const originalBg = copyButton.style.backgroundColor;
+                                  const originalBorder = copyButton.style.borderColor;
+                                  copyButton.style.backgroundColor = 'rgba(244, 67, 54, 0.5)'; /* Reddish for failure */
+                                  copyButton.style.borderColor = 'rgba(244, 67, 54, 0.7)';
+
+                                 setTimeout(() => {
+                                      copyButton.textContent = originalText;
+                                      copyButton.style.backgroundColor = originalBg; // Revert background
+                                      copyButton.style.borderColor = originalBorder; // Revert border
+                                 }, 2000); // Revert text and color after 2 seconds
+                             }
+                         } else {
+                             alert(`No ${siteToCopy} links found to copy.`);
+                         }
+                     });
+
+                     copyButtonsContainer.appendChild(copyButton);
+                 }
+
+                 // Add event listener for the Advanced Google Search button
+                 advancedGoogleButton.addEventListener('click', () => {
+                     const lines = textarea.value.split('\n').map(line => line.trim());
+                     const filters = {
+                        language: languageSelect.value,
+                        fileType: manualFiletypeInput.value.trim() || filetypeSelect.value,
+                        order: orderSelect.value, // Not used by this modifier
+                        attribute: attributeSelect.value, // Not used by this modifier
+                        minYear: minYearInput.value.trim(),
+                        maxYear: maxYearInput.value.trim(),
+                        author: authorInput.value.trim(),
+                        exactPhrase: exactPhraseCheckbox.checked
+                     };
+
+
+                     const resourceTitles = lines.filter(line => line.length > 0 && !line.startsWith('---'));
+
+                     if (resourceTitles.length === 0) {
+                          alert('Please enter media or technical resource titles/topics in the text area above.');
+                          return;
+                     }
+
+                     const googleBaseUrl = `https://www.google.com/search?q=`;
+                     const modifierFn = advancedGoogleModifier; // Use the specific Google modifier
+
+                     // Generate and open a single Google search URL for all titles combined
+                     // This is a simplified approach; a more complex version could generate one URL per title
+                     const combinedQuery = resourceTitles.map(title => {
+                         let encodedTitle = encodeURIComponent(title);
+                         if (filters.exactPhrase) {
+                             encodedTitle = `%22${encodedTitle}%22`;
+                         }
+                         // Use the modifier to get the query part for each title
+                         return modifierFn(encodedTitle, filters);
+                     }).join(' OR '); // Combine titles with OR for a broader search
+
+                     const fullGoogleUrl = googleBaseUrl + combinedQuery;
+
+                     // Open the Google search in a new tab
+                     window.open(fullGoogleUrl, '_blank');
+                 });
+
+                 // Add event listener for the JEDEC Standards button
+                 jedecButton.addEventListener('click', () => {
+                     const lines = textarea.value.split('\n').map(line => line.trim());
+                     const filters = {
+                         language: languageSelect.value, // Not used by this modifier
+                         fileType: manualFiletypeInput.value.trim() || filetypeSelect.value, // File type is hardcoded to pdf in modifier
+                         order: orderSelect.value, // Not used by this modifier
+                         attribute: attributeSelect.value, // Not used by this modifier
+                         minYear: minYearInput.value.trim(),
+                         maxYear: maxYearInput.value.trim(),
+                         author: authorInput.value.trim(),
+                         exactPhrase: exactPhraseCheckbox.checked
+                     };
+
+
+                     const resourceTitles = lines.filter(line => line.length > 0 && !line.startsWith('---'));
+
+                     if (resourceTitles.length === 0) {
+                          alert('Please enter JEDEC standard numbers or topics in the text area above.');
+                          return;
+                     }
+
+                     const googleBaseUrl = `https://www.google.com/search?q=`;
+                     const modifierFn = jedecModifier; // Use the specific JEDEC modifier
+
+                     // Generate and open a single Google search URL for all titles combined
+                     // This is a simplified approach; a more complex version could generate one URL per title
+                     const combinedQuery = resourceTitles.map(title => {
+                         let encodedTitle = encodeURIComponent(title);
+                          if (filters.exactPhrase) {
+                             encodedTitle = `%22${encodedTitle}%22`;
+                         }
+                         // Use the modifier to get the query part for each title
+                         return modifierFn(encodedTitle, filters);
+                     }).join(' OR '); // Combine titles with OR for a broader search
+
+                     const fullGoogleUrl = googleBaseUrl + combinedQuery;
+
+                     // Open the Google search in a new tab
+                     window.open(fullGoogleUrl, '_blank');
+                 });
+
+
+            });
+
+            // Helper function to toggle visibility for a list of sites
+            function toggleSiteVisibility(siteNames) {
+                const resourceItems = resultsDiv.querySelectorAll('.resource-result-item');
+                resourceItems.forEach(item => {
+                    siteNames.forEach(siteName => {
+                        const link = item.querySelector(`.search-links a[data-site="${siteName}"]`);
+                        if (link) {
+                            // Toggle the display style
+                            link.style.display = link.style.display === 'none' ? 'inline-block' : 'none';
+                        }
+                    });
+                });
+            }
+
+
+            // Add event listeners for the toggle buttons
+            toggleDigitalLibraryLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToToggleDigitalLibrary);
+            });
+
+             toggleMarketplaceLinksButton.addEventListener('click', () => {
+                 toggleSiteVisibility(sitesToToggleMarketplace);
+            });
+
+            toggleStandardsLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToToggleStandards);
+            });
+
+            toggleTechDBsLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToToggleTechDBs);
+            });
+
+            togglePatentsLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToTogglePatents);
+            });
+
+            toggleCodeLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToToggleCode);
+            });
+
+            toggleForumsLinksButton.addEventListener('click', () => {
+                toggleSiteVisibility(sitesToToggleForums);
+            });
+
+             // Initial state: Hide the toggled groups on page load
+             // This is handled by the link generation loop, which checks allSitesToToggle
+             // No need for an explicit call here unless you want to ensure it happens *after* generation
+             // If you want to ensure they are hidden on initial page load before generating,
+             // you would need to call toggleSiteVisibility for each group here, but that's less efficient.
+             // The current method in the generateButton click handler is better as it hides during creation.
+
+        });
+    </script>
+
+</body>
+</html>
